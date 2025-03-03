@@ -5,6 +5,8 @@ import logoWhite from "../assets/logo_white.png"
 import { MdDashboard } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import ContactCard from "./ContactCard";
+import UserDetails from "./UserDetails";
+import AdminPage from "./AdminPage";
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -70,7 +72,9 @@ const Navbar = () => {
      {/* Placeholder for main content */}
      <div className=" overflow-y-auto pb-28 bg-gray-50  flex-1">
           {/* <h2 className="text-2xl font-bold">Welcome to AgriTools Dashboard</h2> */}
-          <ContactCard/>
+          {/* <ContactCard/> */}
+          {/* <UserDetails/> */}
+          <AdminPage/>
         </div>
         </div>
     

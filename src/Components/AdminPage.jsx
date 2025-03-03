@@ -1,0 +1,122 @@
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const AdminPage = () => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data) => {
+    if (Object.values(data).some((field) => !field)) {
+      toast.error('Please fill all important fields');
+      return;
+    }
+    console.log(data);
+    toast.success('Form submitted successfully!');
+    reset();
+  };
+
+  const imageValidation = {
+    required: 'Image is required',
+    validate: {
+      fileType: (value) => {
+        if (!value[0]?.name.match(/\.(png|jpg|JPG|jpeg)$/)) {
+          return 'Only PNG, JPG formats are allowed';
+        }
+        return true;
+      },
+    },
+  };
+
+  return (
+    <>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 text-2xl"
+      >
+        <div className="bg-gray-100 p-4 rounded-xl flex flex-col">
+          <label><strong>Address:</strong></label>
+          <input
+            {...register('address', { required: 'Address is required' })}
+            placeholder="Enter Address"
+            className="p-2 rounded mb-2"
+          />
+          {errors.address && <span className="text-red-500">{errors.address.message}</span>}
+
+          <label><strong>Business Name:</strong></label>
+          <input
+            {...register('businessName', { required: 'Business Name is required' })}
+            placeholder="Enter Business Name"
+            className="p-2 rounded mb-2"
+          />
+          {errors.businessName && <span className="text-red-500">{errors.businessName.message}</span>}
+
+          <label><strong>Mobile No:</strong></label>
+          <input
+            {...register('mobileNo', { required: 'Mobile No is required' })}
+            placeholder="Enter Mobile No"
+            className="p-2 rounded mb-2"
+          />
+          {errors.mobileNo && <span className="text-red-500">{errors.mobileNo.message}</span>}
+
+          <label><strong>Joining Date:</strong></label>
+          <input
+            {...register('joiningDate', { required: 'Joining Date is required' })}
+            type="date"
+            className="p-2 rounded mb-2"
+          />
+          {errors.joiningDate && <span className="text-red-500">{errors.joiningDate.message}</span>}
+
+          <label><strong>Upload Image:</strong></label>
+          <input
+            {...register('image', imageValidation)}
+            type="file"
+            className="p-2 mb-2"
+          />
+          {errors.image && <span className="text-red-500">{errors.image.message}</span>}
+        </div>
+
+        <div className="bg-gray-100 p-4 rounded-xl flex flex-col">
+          <h2 className="font-bold mb-2">Most Sold Clothes</h2>
+          <label>Pant Sold:</label>
+          <input {...register('pantSold')} placeholder="Enter Pant Sold" className="p-2 rounded mb-2" />
+
+          <label>Shirt Sold:</label>
+          <input {...register('shirtSold')} placeholder="Enter Shirt Sold" className="p-2 rounded mb-2" />
+
+          <label>Saree Sold:</label>
+          <input {...register('sareeSold')} placeholder="Enter Saree Sold" className="p-2 rounded mb-2" />
+
+          <label>Shocks Sold:</label>
+          <input {...register('shocksSold')} placeholder="Enter Shocks Sold" className="p-2 rounded mb-2" />
+        </div>
+
+        <div className="bg-gray-100 p-4 rounded-xl flex w-full flex-col">
+          <label><strong>Total Sold:</strong></label>
+          <input {...register('totalSold')} placeholder="Enter Total Sold" className="p-2 rounded mb-2" />
+
+          <label><strong>Total Margin:</strong></label>
+          <input {...register('totalMargin')} placeholder="Enter Total Margin" className="p-2 rounded mb-2" />
+
+          <label><strong>Total Items Sold:</strong></label>
+          <input {...register('totalItemsSold')} placeholder="Enter Total Items Sold" className="p-2 rounded mb-2" />
+        </div>
+
+        <button
+          type="submit"
+          className="bg-blue-500 text-white p-2 rounded mt-4 md:col-span-2"
+        >
+          Submit
+        </button>
+      </form>
+      <ToastContainer position="top-center" autoClose={3000} />
+    </>
+  );
+};
+
+export default AdminPage;

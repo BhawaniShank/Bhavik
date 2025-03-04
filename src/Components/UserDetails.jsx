@@ -8,8 +8,8 @@ const UserDetails = () => {
     businessName: 'Lorem Textiles',
     mobileNo: '1234567890',
     joiningDate: '01-01-2020',
-    totalSold: 390,
-    totalMargin: '60%',
+    totalSold: 3900,
+    totalMargin: '5%',
     totalItemsSold: 500,
     image: 'https://picsum.photos/200'
   };

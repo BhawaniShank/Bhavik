@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown, Phone, Mail } from "lucide-react";
-
+import { Link } from 'react-router-dom';
 const contacts = [
   {
     id: 1,
@@ -54,18 +54,20 @@ const ContactCard = ({ contact }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="w-full max-w-sm mx-auto p-2 lg:p-4">
+    <div className="w-full max-w-lg mx-auto p-2 lg:p-4">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="relative">
           <img src={contact.bgImg} alt="background" className="w-full h-40 sm:h-48 object-cover" />
         </div>
         <div className="p-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between gap-3">
             <img src={contact.profileImg} alt="profile" className="w-12 h-12 rounded-full" />
+            <Link to="/user-details">
             <div className="flex-1">
               <h2 className="text-md font-semibold">{contact.name}</h2>
               <p className="text-gray-500 text-sm">{contact.role}</p>
             </div>
+            </Link>
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 rounded-full hover:bg-gray-200 transition"

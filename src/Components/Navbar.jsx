@@ -7,6 +7,8 @@ import { FaUser } from "react-icons/fa";
 import ContactCard from "./ContactCard";
 import UserDetails from "./UserDetails";
 import AdminPage from "./AdminPage";
+import { Link } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -51,21 +53,21 @@ const Navbar = () => {
             <img src={logoWhite} className="w-28"></img>
           </div>
           <nav className="mt-28 lg:mt-[2vh] space-y-2">
-            <a
-              href="#dashboard"
+            <Link
+              to="/admin"
               className="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500"
             >
               <span className="mr-2"><MdDashboard /></span> Dashboard
-            </a>
+            </Link>
            
            
             
-            <a
-              href="#users"
+            <Link
+              to="/contact"
               className="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500"
             >
               <span className="mr-2"><FaUser /></span> Users
-            </a>
+            </Link>
           </nav>
         </div>
       </div>
@@ -74,7 +76,8 @@ const Navbar = () => {
           {/* <h2 className="text-2xl font-bold">Welcome to AgriTools Dashboard</h2> */}
           {/* <ContactCard/> */}
           {/* <UserDetails/> */}
-          <AdminPage/>
+          {/* <AdminPage/> */}
+          <Outlet />
         </div>
         </div>
     

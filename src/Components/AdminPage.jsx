@@ -80,7 +80,7 @@ const AdminPage = () => {
           />
           {errors.image && <span className="text-red-500">{errors.image.message}</span>}
         </div>
-
+{/* 
         <div className="bg-gray-100 p-4 rounded-xl flex flex-col">
           <h2 className="font-bold mb-2">Most Sold Clothes</h2>
           <label>Pant Sold:</label>
@@ -94,9 +94,9 @@ const AdminPage = () => {
 
           <label>Shocks Sold:</label>
           <input {...register('shocksSold')} placeholder="Enter Shocks Sold" className="p-2 rounded mb-2" />
-        </div>
+        </div> */}
 
-        <div className="bg-gray-100 p-4 rounded-xl flex w-full flex-col">
+        {/* <div className="bg-gray-100 p-4 rounded-xl flex w-full flex-col">
           <label><strong>Total Sold:</strong></label>
           <input {...register('totalSold')} placeholder="Enter Total Sold" className="p-2 rounded mb-2" />
 
@@ -105,7 +105,7 @@ const AdminPage = () => {
 
           <label><strong>Total Items Sold:</strong></label>
           <input {...register('totalItemsSold')} placeholder="Enter Total Items Sold" className="p-2 rounded mb-2" />
-        </div>
+        </div> */}
 
         <button
           type="submit"

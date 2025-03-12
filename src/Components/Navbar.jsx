@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Menu, User, Bell } from "lucide-react";
+import { Menu, User, Bell, UserPlus } from "lucide-react";
 import logo from "../assets/logo1.png";
 import logoWhite from "../assets/logo_white.png";
 import { MdDashboard } from "react-icons/md";
@@ -65,7 +65,7 @@ const Navbar = () => {
             </div>
             <nav className="mt-28 lg:mt-[2vh] space-y-2">
               <Link
-                to="/admin"
+                to="/"
                 className="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500"
               >
                 <span className="mr-2">
@@ -82,6 +82,15 @@ const Navbar = () => {
                   <FaUser />
                 </span>{" "}
                 Users
+              </Link>
+              <Link
+               to="/admin"
+                className="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500"
+              >
+                <span className="mr-2">
+                  <UserPlus />
+                </span>{" "}
+               Add Users
               </Link>
             </nav>
           </div>

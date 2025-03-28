@@ -40,6 +40,50 @@ const AdminPage = () => {
         className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 text-2xl"
       >
         <div className="bg-gray-100 p-4 rounded-xl flex flex-col">
+          <label><strong>Username:</strong></label>
+          <input
+            {...register('username', { required: 'Username is required' })}
+            placeholder="Enter Username"
+            className="p-2 rounded mb-2"
+          />
+          {errors.username && <span className="text-red-500">{errors.username.message}</span>}
+
+          <label><strong>Email:</strong></label>
+          <input
+            {...register('gmail', { required: 'Email is required' })}
+            type="email"
+            placeholder="Enter Email"
+            className="p-2 rounded mb-2"
+          />
+          {errors.gmail && <span className="text-red-500">{errors.gmail.message}</span>}
+
+          <label><strong>Password:</strong></label>
+          <input
+            {...register('password', { required: 'Password is required' })}
+            type="password"
+            placeholder="Enter Password"
+            className="p-2 rounded mb-2"
+          />
+          {errors.password && <span className="text-red-500">{errors.password.message}</span>}
+
+          <label><strong>Upload Image:</strong></label>
+          <input
+            {...register('image', imageValidation)}
+            type="file"
+            className="p-2 mb-2"
+          />
+          {errors.image && <span className="text-red-500">{errors.image.message}</span>}
+
+          <label><strong>Upload QR Code:</strong></label>
+          <input
+            {...register('qr', { required: 'QR Code is required' })}
+            type="file"
+            className="p-2 mb-2"
+          />
+          {errors.qr && <span className="text-red-500">{errors.qr.message}</span>}
+        </div>
+
+        <div className="bg-gray-100 p-4 rounded-xl flex flex-col">
           <label><strong>Address:</strong></label>
           <input
             {...register('address', { required: 'Address is required' })}
@@ -71,45 +115,13 @@ const AdminPage = () => {
             className="p-2 rounded mb-2"
           />
           {errors.joiningDate && <span className="text-red-500">{errors.joiningDate.message}</span>}
-
-          <label><strong>Upload Image:</strong></label>
-          <input
-            {...register('image', imageValidation)}
-            type="file"
-            className="p-2 mb-2"
-          />
-          {errors.image && <span className="text-red-500">{errors.image.message}</span>}
         </div>
-{/* 
-        <div className="bg-gray-100 p-4 rounded-xl flex flex-col">
-          <h2 className="font-bold mb-2">Most Sold Clothes</h2>
-          <label>Pant Sold:</label>
-          <input {...register('pantSold')} placeholder="Enter Pant Sold" className="p-2 rounded mb-2" />
 
-          <label>Shirt Sold:</label>
-          <input {...register('shirtSold')} placeholder="Enter Shirt Sold" className="p-2 rounded mb-2" />
-
-          <label>Saree Sold:</label>
-          <input {...register('sareeSold')} placeholder="Enter Saree Sold" className="p-2 rounded mb-2" />
-
-          <label>Shocks Sold:</label>
-          <input {...register('shocksSold')} placeholder="Enter Shocks Sold" className="p-2 rounded mb-2" />
-        </div> */}
-
-        {/* <div className="bg-gray-100 p-4 rounded-xl flex w-full flex-col">
-          <label><strong>Total Sold:</strong></label>
-          <input {...register('totalSold')} placeholder="Enter Total Sold" className="p-2 rounded mb-2" />
-
-          <label><strong>Total Margin:</strong></label>
-          <input {...register('totalMargin')} placeholder="Enter Total Margin" className="p-2 rounded mb-2" />
-
-          <label><strong>Total Items Sold:</strong></label>
-          <input {...register('totalItemsSold')} placeholder="Enter Total Items Sold" className="p-2 rounded mb-2" />
-        </div> */}
+        
 
         <button
           type="submit"
-          className="bg-blue-500 text-white p-2 rounded mt-4 md:col-span-2"
+          className="bg-blue-500 md:w-[50%] mx-auto text-white p-2 rounded mt-4 md:col-span-2"
         >
           Submit
         </button>

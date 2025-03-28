@@ -5,11 +5,12 @@ import logoWhite from "../assets/logo_white.png";
 import { MdDashboard } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import { Link, Outlet } from "react-router-dom";
-
+import { FaBell } from "react-icons/fa";
+import VendorTable from "./VendorTable";
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const sidebarRef = useRef(null);
-
+  const [open, setOpen] = useState(false);
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -27,12 +28,27 @@ const Navbar = () => {
     };
   }, [isSidebarOpen]);
 
+  const dropdownRef = useRef(null);
+
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setOpen(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [open]);
+
   return (
-    <div className="h-full z-40 fixed w-full">
+    <div className="h-full z-30 fixed w-full">
       {/* Main Content */}
       <div className="flex flex-col overflow-hidden flex-1">
         {/* Topbar */}
-        <div className="flex min-h-[5em] items-center z-40 justify-between gap-10 px-4 py-2 bg-white shadow-md">
+        <div className="flex min-h-[5em] items-center z-30 justify-between gap-10 px-4 py-2 bg-white shadow-md">
           <button
             className="text-gray-600 lg:hidden"
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -43,19 +59,26 @@ const Navbar = () => {
             <img src={logo} className="w-28" alt="Logo" />
           </div>
 
-          <div className="flex items-center space-x-4">
-            <h1 className="text-lg font-semibold">Role: ADMIN</h1>
-            <Bell size={24} className="text-gray-600" />
-            <User size={24} className="text-gray-600" />
-          </div>
+          
+          <button
+        className="flex items-center cursor-pointer"
+        onClick={() => setOpen(!open)}
+      >
+        <FaBell size={24} className="text-gray-600" />
+      </button>
+      {open &&
+      <div ref={dropdownRef} className="absolute right-0  top-16 bg-white">
+     <VendorTable/>
+     </div>
+}
         </div>
       </div>
 
       {/* Sidebar */}
-      <div className="flex w-full h-full">
+      <div className="flex w-full  h-full">
         <div
           ref={sidebarRef}
-          className={`fixed top-0 left-0 h-full min-h-[96vh] bg-[#1c1f27] transition-transform duration-300 z-30 lg:relative lg:translate-x-0 ${
+          className={`fixed top-0 left-0 h-full min-h-[96vh] bg-[#1c1f27] transition-transform duration-300 z-40 lg:relative lg:translate-x-0 ${
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >

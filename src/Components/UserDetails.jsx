@@ -3,15 +3,28 @@ import { FaTshirt, FaMitten, FaSocks } from 'react-icons/fa';
 import { GiTrousers } from 'react-icons/gi';
 import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
-
+import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import BoyChild from "./SoldCloths/BoyChild";
+import GirlChild from "./SoldCloths/GirlChild";
+import Men from "./SoldCloths/Men";
+import Women from "./SoldCloths/Women";
 const UserDetails = () => {
+
+  const location = useLocation();
+  const contact = location.state?.contact; // Get the passed contact data
+
+  if (!contact) {
+    return <div>No contact data found.</div>;
+  }
+
   const userData = {
     address: 'Delhi 345',
-    businessName: 'Lorem Textiles',
+    businessName: contact.name,
     mobileNo: '1234567890',
     joiningDate: '01-01-2020',
     totalSold: 3900,
-    totalMargin: '5%',
+    totalMargin: '5',
     totalItemsSold: 500,
     image: 'https://picsum.photos/200',
     QrImage: 'https://picsum.photos/300'
@@ -34,10 +47,10 @@ const UserDetails = () => {
   ];
 
   const clothesData = [
-    { icon: <GiTrousers className="mr-2" />, name: 'Pant', sold: 100 },
-    { icon: <FaTshirt className="mr-2" />, name: 'Shirt', sold: 150 },
-    { icon: <FaMitten className="mr-2" />, name: 'Saree', sold: 80 },
-    { icon: <FaSocks className="mr-2" />, name: 'Shocks', sold: 60 }
+    {  name: 'girl child', sold: 100  },
+    {  name: 'boy child', sold: 150  },
+    {  name: 'men', sold: 80  },
+    { name: 'women', sold: 60  }
   ];
 
     const itemsPerPage = 10;
@@ -56,9 +69,12 @@ const UserDetails = () => {
     }
   }
 
-
+  const [indexing, setIndexing]=useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
+
   const modalRef = useRef(null);
+  const modalRef2 = useRef(null);
 
   const {
     register,
@@ -88,6 +104,13 @@ const UserDetails = () => {
     }
   };
 
+  const handleClickOutside2 = (event) => {
+    if (modalRef2.current && !modalRef2.current.contains(event.target)) {
+      setShowModal2(false);
+      reset();
+    }
+  };
+
   useEffect(() => {
     if (showModal) {
       document.addEventListener("mousedown", handleClickOutside);
@@ -99,21 +122,31 @@ const UserDetails = () => {
     };
   }, [showModal]);
 
-
+  useEffect(() => {
+    if (showModal2) {
+      document.addEventListener("mousedown", handleClickOutside2);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside2);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside2);
+    };
+  }, [showModal2]);
+  
 
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-      <div className="flex justify-between flex-col 2xl:flex-row row-span-3 py-2 gap-2 lg:px-20 items-center bg-gray-100 rounded-xl">
+      <div className="flex justify-between flex-col 2xl:h-[20em] 2xl:flex-row row-span-3 py-2 gap-2 px-2 items-center bg-gray-100 rounded-xl">
         <img
           src={userData.image}
           alt="User Photo"
-          className="w-full 2xl:w-1/2 h-full object-cover rounded-xl"
+          className="w-full md:min-w-[20em] 2xl:w-1/2 h-full object-cover rounded-xl"
         />
          <img
           src={userData.QrImage}
           alt="User Photo"
-          className="w-full 2xl:w-1/2 h-full object-cover rounded-xl"
+          className="w-full md:min-w-[20em] 2xl:w-1/2 h-full object-cover rounded-xl"
         />
       </div>
 
@@ -126,17 +159,19 @@ const UserDetails = () => {
 
       <div className="bg-gray-100 p-4 rounded-xl text-lg md:text-2xl">
         <h2 className="font-bold mb-2">Most Sold Clothes</h2>
-        {clothesData.map((item, index) => (
-          <div key={index} className="flex justify-between mb-2">
-            <div className="flex items-center">{item.icon}<span>{item.name}</span></div>
-            <span>{item.sold}</span>
-          </div>
-        ))}
+        {clothesData.map((item, index, comp) => (
+  <p key={index} onClick={() => {setShowModal2(true),setIndexing(index) }} className="flex justify-between mb-2 cursor-pointer">
+    <div className="flex items-center"><span>{item.name}</span></div>
+    <span>{item.sold}</span>
+    
+  </p>
+))}
+
       </div>
 
       <div className="bg-gray-100 p-4 rounded-xl text-lg md:text-2xl flex flex-col justify-between">
         <div className="flex justify-between"><span><strong>Total Sold:</strong></span><span>{userData.totalSold}</span></div>
-        <div className="flex justify-between"><span><strong>Total Margin:</strong></span><span>{userData.totalMargin}</span></div>
+        <div className="flex justify-between"><span><strong>Total Margin Remaining:</strong></span><span>{userData.totalMargin}</span></div>
         <div className="flex justify-between"><span><strong>Total items sold:</strong></span><span>{userData.totalItemsSold}</span></div>
       </div>
 
@@ -201,6 +236,26 @@ const UserDetails = () => {
       </div>
     </div>
 
+    {showModal2 && (
+        <div className="fixed inset-0 flex items-center justify-center px-3 bg-black/50 z-50">
+          <div ref={modalRef2} className="relative bg-white p-6 rounded-lg shadow-md  w-full md:w-[80%] lg:w-1/2">
+            {/* Cross Button to Close Modal */}
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => {
+                setShowModal2(false);
+                reset();
+              }}
+            >
+              ✖
+            </button>
+            {indexing===0 && <GirlChild />}
+            {indexing===1 && <BoyChild />}
+            {indexing===2 && <Men/>}
+            {indexing===3 && <Women/>}
+            </div>
+            </div>
+    )}
 
     {showModal && (
         <div className="fixed inset-0 flex items-center justify-center px-3 bg-black/50 z-50">

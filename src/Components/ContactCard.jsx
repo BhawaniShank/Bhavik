@@ -62,7 +62,7 @@ const ContactCard = ({ contact }) => {
         <div className="p-4">
           <div className="flex items-center justify-between gap-3">
             <img src={contact.profileImg} alt="profile" className="w-12 h-12 rounded-full" />
-            <Link to="/user-details">
+            <Link to="/user-details" state={{ contact }}>
             <div className="flex-1">
               <h2 className="text-md font-semibold">{contact.name}</h2>
               <p className="text-gray-500 text-sm">{contact.role}</p>

@@ -7,6 +7,8 @@ import { FaUser } from "react-icons/fa";
 import { Link, Outlet } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
 import VendorTable from "./VendorTable";
+import { Download } from "lucide-react";
+
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const sidebarRef = useRef(null);
@@ -43,6 +45,11 @@ useEffect(() => {
   };
 }, [open]);
 
+const downloadApkFile = () => {
+  window.location.href = "/public/Mtw.apk";
+};
+
+
   return (
     <div className="h-full z-30 fixed w-full">
       {/* Main Content */}
@@ -59,18 +66,24 @@ useEffect(() => {
             <img src={logo} className="w-28" alt="Logo" />
           </div>
 
-          
+          <div className="flex items-center gap-4">
+          <button className="flex cursor-pointer items-center px-4 py-4 text-xs hover:text-gray-50 rounded-full hover:bg-orange-500" onClick={downloadApkFile}>
+            <Download/>
+            </button>
+
           <button
         className="flex items-center cursor-pointer"
         onClick={() => setOpen(!open)}
       >
         <FaBell size={24} className="text-gray-600" />
       </button>
+      </div>
       {open &&
       <div ref={dropdownRef} className="absolute right-0  top-16 bg-white">
      <VendorTable/>
      </div>
-}
+}     
+
         </div>
       </div>
 
@@ -115,6 +128,7 @@ useEffect(() => {
                 </span>{" "}
                Add Users
               </Link>
+
             </nav>
           </div>
         </div>

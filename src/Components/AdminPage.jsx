@@ -48,14 +48,9 @@ const AdminPage = () => {
           />
           {errors.username && <span className="text-red-500">{errors.username.message}</span>}
 
-          <label><strong>Email:</strong></label>
-          <input
-            {...register('gmail', { required: 'Email is required' })}
-            type="email"
-            placeholder="Enter Email"
-            className="p-2 rounded mb-2"
-          />
-          {errors.gmail && <span className="text-red-500">{errors.gmail.message}</span>}
+
+
+
 
           <label><strong>Password:</strong></label>
           <input

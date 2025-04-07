@@ -46,7 +46,7 @@ useEffect(() => {
 }, [open]);
 
 const downloadApkFile = () => {
-  window.location.href = "/public/Mtw.apk";
+  window.location.href = "../../public/Mtw.apk";
 };
 
 

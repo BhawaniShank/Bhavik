@@ -107,6 +107,7 @@ const UserDetails = () => {
   const handleClickOutside2 = (event) => {
     if (modalRef2.current && !modalRef2.current.contains(event.target)) {
       setShowModal2(false);
+      
       reset();
     }
   };

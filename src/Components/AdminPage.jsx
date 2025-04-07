@@ -99,7 +99,9 @@ const AdminPage = () => {
           <input
             {...register('mobileNo', { required: 'Mobile No is required' })}
             placeholder="Enter Mobile No"
+            
             className="p-2 rounded mb-2"
+            type="number"
           />
           {errors.mobileNo && <span className="text-red-500">{errors.mobileNo.message}</span>}
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import axios from 'axios';
 const AdminPage = () => {
   const {
     register,
@@ -10,15 +10,54 @@ const AdminPage = () => {
     reset,
     formState: { errors },
   } = useForm();
-
-  const onSubmit = (data) => {
-    if (Object.values(data).some((field) => !field)) {
+  const onSubmit = async (data) => {
+    console.log('Original Form Data:', data);
+  
+    // Validate all fields
+    if (
+      Object.values(data).some(
+        (field) => !field || (field instanceof FileList && field.length === 0)
+      )
+    ) {
       toast.error('Please fill all important fields');
       return;
     }
-    console.log(data);
-    toast.success('Form submitted successfully!');
-    reset();
+  
+    const formData = new FormData();
+    formData.append('username', data.username);
+    formData.append('password', data.password);
+    formData.append('mobileNo', data.mobileNo);
+    formData.append('address', data.address);
+    formData.append('joiningDate', data.joiningDate);
+    formData.append('businessName', data.businessName);
+  
+    // Append files directly
+    formData.append('image', data.image[0]);
+    formData.append('qr', data.qr[0]);
+  
+    try {
+      const response = await axios.post(
+        'https://zivaworld.online/microservices/add_user.php',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+  
+      console.log('Server Response:', response.data);
+  
+      if (response.data.status === 'success') {
+        toast.success('Form submitted successfully!');
+        reset();
+      } else {
+        toast.error(response.data.message || 'Submission failed');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Something went wrong. Please try again.');
+    }
   };
 
   const imageValidation = {

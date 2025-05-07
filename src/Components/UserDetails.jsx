@@ -1,6 +1,6 @@
 import React from "react";
-import { FaTshirt, FaMitten, FaSocks } from 'react-icons/fa';
-import { GiTrousers } from 'react-icons/gi';
+import { FaTshirt, FaMitten, FaSocks } from "react-icons/fa";
+import { GiTrousers } from "react-icons/gi";
 import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
@@ -10,10 +10,12 @@ import GirlChild from "./SoldCloths/GirlChild";
 import Men from "./SoldCloths/Men";
 import Women from "./SoldCloths/Women";
 import axios from "axios";
+import { ImCross } from "react-icons/im";
 const UserDetails = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [currentImage, setCurrentImage] = useState("");
-  
+  const [currentItem, setCurrentItem] = useState([]);
+
   const handleOpenPopup = (src) => {
     setCurrentImage(src);
     setShowPopup(true);
@@ -31,100 +33,127 @@ const UserDetails = () => {
   }
 
   const userData = {
-    address: 'Delhi 345',
+    address: "Delhi 345",
     businessName: contact.name,
-    mobileNo: '1234567890',
-    joiningDate: '01-01-2020',
+    mobileNo: "1234567890",
+    joiningDate: "01-01-2020",
     totalSold: 3900,
-    totalMargin: '5',
+    totalMargin: "5",
     totalItemsSold: 500,
-    image: 'https://picsum.photos/200',
-    QrImage: 'https://picsum.photos/300'
+    image: "https://picsum.photos/200",
+    QrImage: "https://picsum.photos/300",
   };
 
   const [Olddata, setOlddata] = useState([]);
 
-  useEffect(()=>{
-    const fetchData = async () =>{
-      const data = new FormData()
-      data.append("phone_number" , contact.phone_number) 
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = new FormData();
+      data.append("phone_number", contact.phone_number);
       try {
-        const response = await axios.post('https://zivaworld.online/microservices/fetch_user_payment.php',data,
+        const response = await axios.post(
+          "https://zivaworld.online/microservices/fetch_user_payment.php",
+          data,
           {
-            headers:{
-              'Content-Type': 'multipart/form-data'
-            }
-          }
-        )
-        if(response.status == 200){
-          console.log('success response', response.data);
-          setOlddata(response.data.data)
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          },
+        );
+        if (response.status == 200) {
+          console.log("success response", response.data);
+          setOlddata(response.data.data);
         }
       } catch (error) {
-        console.log('error response', error);
+        console.log("error response", error);
       }
-    }
+    };
 
     fetchData();
+  }, []);
 
-  },[])
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const formData = new FormData();
+        formData.append("phone_number", contact.phone_number); // or your state/prop value
 
-  const currentItem = [
-    {
-      date: '2025-03-21',
-      status: 'Paid',
-      amount: '5000Rs',
-      details: [
-        { item_name: 'tshirt', quantity: 6, total: 1000 },
-        { item_name: 'pants', quantity: 6, total: 1000 },
-        { item_name: 'shirt', quantity: 6, total: 1000 },
-        { item_name: 'trousers', quantity: 6, total: 1000 },
-        { item_name: 'skirt', quantity: 6, total: 1000 },
-      ]
-    },
-    {
-      date: '2025-02-15',
-      status: 'Unpaid',
-      amount: '3000Rs',
-      details: [
-        { item_name: 'jacket', quantity: 2, total: 1500 },
-        { item_name: 'gloves', quantity: 5, total: 500 },
-        { item_name: 'scarf', quantity: 4, total: 1000 },
-      ]
-    },
-    {
-      date: '2025-01-10',
-      status: 'Paid',
-      amount: '4500Rs',
-      details: [
-        { item_name: 'jeans', quantity: 3, total: 1800 },
-        { item_name: 'hoodie', quantity: 2, total: 1700 },
-        { item_name: 'cap', quantity: 4, total: 1000 },
-      ]
-    },
-    {
-      date: '2025-04-05',
-      status: 'Pending',
-      amount: '2500Rs',
-      details: [
-        { item_name: 'shorts', quantity: 5, total: 1250 },
-        { item_name: 'socks', quantity: 10, total: 1250 },
-      ]
-    },
-    {
-      date: '2025-03-01',
-      status: 'Paid',
-      amount: '6000Rs',
-      details: [
-        { item_name: 'blazer', quantity: 2, total: 3000 },
-        { item_name: 'tie', quantity: 5, total: 1000 },
-        { item_name: 'belt', quantity: 4, total: 2000 },
-      ]
-    }
-  ];
-  
-  
+        const response = await axios.post(
+          "https://zivaworld.online/microservices/fetch_user_purchases.php",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          },
+        );
 
+        if (response.status === 200) {
+          console.log("success response", response.data);
+          setCurrentItem(response.data);
+          // Do something with response.data
+        }
+      } catch (error) {
+        console.log("error response", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // const currentItem = [
+  //   {
+  //     date: '2025-03-21',
+  //     status: 'Paid',
+  //     amount: '5000Rs',
+  //     details: [
+  //       { item_name: 'tshirt', quantity: 6, total: 1000 },
+  //       { item_name: 'pants', quantity: 6, total: 1000 },
+  //       { item_name: 'shirt', quantity: 6, total: 1000 },
+  //       { item_name: 'trousers', quantity: 6, total: 1000 },
+  //       { item_name: 'skirt', quantity: 6, total: 1000 },
+  //     ]
+  //   },
+  //   {
+  //     date: '2025-02-15',
+  //     status: 'Unpaid',
+  //     amount: '3000Rs',
+  //     details: [
+  //       { item_name: 'jacket', quantity: 2, total: 1500 },
+  //       { item_name: 'gloves', quantity: 5, total: 500 },
+  //       { item_name: 'scarf', quantity: 4, total: 1000 },
+  //     ]
+  //   },
+  //   {
+  //     date: '2025-01-10',
+  //     status: 'Paid',
+  //     amount: '4500Rs',
+  //     details: [
+  //       { item_name: 'jeans', quantity: 3, total: 1800 },
+  //       { item_name: 'hoodie', quantity: 2, total: 1700 },
+  //       { item_name: 'cap', quantity: 4, total: 1000 },
+  //     ]
+  //   },
+  //   {
+  //     date: '2025-04-05',
+  //     status: 'Pending',
+  //     amount: '2500Rs',
+  //     details: [
+  //       { item_name: 'shorts', quantity: 5, total: 1250 },
+  //       { item_name: 'socks', quantity: 10, total: 1250 },
+  //     ]
+  //   },
+  //   {
+  //     date: '2025-03-01',
+  //     status: 'Paid',
+  //     amount: '6000Rs',
+  //     details: [
+  //       { item_name: 'blazer', quantity: 2, total: 3000 },
+  //       { item_name: 'tie', quantity: 5, total: 1000 },
+  //       { item_name: 'belt', quantity: 4, total: 2000 },
+  //     ]
+  //   }
+  // ];
 
   // const Olddata = [
   //   { date: '12/11/25', amount: 500 },
@@ -142,33 +171,34 @@ const UserDetails = () => {
   // ];
 
   const clothesData = [
-    {  name: 'girl child', sold: 100  },
-    {  name: 'boy child', sold: 150  },
-    {  name: 'men', sold: 80  },
-    { name: 'women', sold: 60  }
+    { name: "girl child", sold: 100 },
+    { name: "boy child", sold: 150 },
+    { name: "men", sold: 80 },
+    { name: "women", sold: 60 },
   ];
 
-    const itemsPerPage = 10;
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
   // Calculate the current items to display
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItems = Array.isArray(Olddata)
-  ? Olddata.slice(startIndex, startIndex + itemsPerPage)
-  : [];
-
+    ? Olddata.slice(startIndex, startIndex + itemsPerPage)
+    : [];
 
   // Pagination handler
   const handlePageChange = (direction) => {
     if (direction === "prev" && currentPage > 1) {
       setCurrentPage(currentPage - 1);
-    } else if (direction === "next" && currentPage < Math.ceil(Olddata?.length / itemsPerPage)) {
-
+    } else if (
+      direction === "next" &&
+      currentPage < Math.ceil(Olddata?.length / itemsPerPage)
+    ) {
       setCurrentPage(currentPage + 1);
     }
-  }
+  };
 
-  const [indexing, setIndexing]=useState(0);
+  const [indexing, setIndexing] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
 
@@ -189,34 +219,34 @@ const UserDetails = () => {
   };
 
   const onSubmit = async (data) => {
-    const sendingData = new FormData()
-      sendingData.append("phone_no" , contact.phone_number) 
-      sendingData.append("date" , data.date) 
-      sendingData.append("amount" , data.amount) 
-      sendingData.append("ss" , data.image[0]) 
-      try {
-        const response = await axios.post('https://zivaworld.online/microservices/add_user_payment.php',sendingData,
-          {
-            headers:{
-              'Content-Type': 'multipart/form-data'
-            }
-          }
-        )
-        if(response.status == 200){
-          console.log('success response', response.data);
-        }
-      } catch (error) {
-        console.log('error response', error);
+    const sendingData = new FormData();
+    sendingData.append("phone_no", contact.phone_number);
+    sendingData.append("date", data.date);
+    sendingData.append("amount", data.amount);
+    sendingData.append("ss", data.image[0]);
+    try {
+      const response = await axios.post(
+        "https://zivaworld.online/microservices/add_user_payment.php",
+        sendingData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+      if (response.status == 200) {
+        console.log("success response", response.data);
       }
-
-
+    } catch (error) {
+      console.log("error response", error);
+    }
 
     console.log("Image:", data.image[0]);
     console.log("Amount:", data.amount);
     console.log("Date:", data.date || getTodayDate());
     setShowModal(false);
     reset();
-    window.location.reload()
+    window.location.reload();
   };
 
   const handleClickOutside = (event) => {
@@ -229,7 +259,7 @@ const UserDetails = () => {
   const handleClickOutside2 = (event) => {
     if (modalRef2.current && !modalRef2.current.contains(event.target)) {
       setShowModal2(false);
-      
+
       reset();
     }
   };
@@ -255,114 +285,16 @@ const UserDetails = () => {
       document.removeEventListener("mousedown", handleClickOutside2);
     };
   }, [showModal2]);
-  
-
-
-
-
-
-
-
-
-
-
-
-const UserDetails = () => {
-  // Existing imports and state...
-
-  const [salesCurrentPage, setSalesCurrentPage] = useState(1);
-  const salesStartIndex = (salesCurrentPage - 1) * itemsPerPage;
-  const currentSalesItems = currentItem.slice(salesStartIndex, salesStartIndex + itemsPerPage);
-  const handleSalesPageChange = (direction) => {
-    const totalSalesPages = Math.ceil(currentItem.length / itemsPerPage);
-    if (direction === "prev" && salesCurrentPage > 1) {
-      setSalesCurrentPage(salesCurrentPage - 1);
-    } else if (direction === "next" && salesCurrentPage < totalSalesPages) {
-      setSalesCurrentPage(salesCurrentPage + 1);
-    }
-  };
-
-  const [showSalesModal, setShowSalesModal] = useState(false);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-      {/* Existing JSX */}
-      
-      <SalesTable items={currentSalesItems} />
-      <div className="flex justify-between items-center mt-4 px-2">
-        <button
-          onClick={() => handleSalesPageChange("prev")}
-          disabled={salesCurrentPage === 1}
-          className="px-4 py-2 bg-gray-200 text-gray-600 rounded-md disabled:cursor-not-allowed"
-        >
-          Previous
-        </button>
-        <span className="text-black font-semibold">Page {salesCurrentPage}</span>
-        <div>
-          <button
-            onClick={() => handleSalesPageChange("next")}
-            disabled={salesStartIndex + itemsPerPage >= currentItem.length}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-          >
-            Next
-          </button>
-          <button
-            className="px-4 py-2 ml-5 hidden md:inline-block bg-gray-200 rounded-md hover:bg-gray-300"
-            onClick={() => setShowSalesModal(true)}
-          >
-            Add To Table
-          </button>
-        </div>
-      </div>
-
-      {showSalesModal && (
-        <div className="fixed inset-0 flex items-center justify-center px-3 bg-black/50 z-50">
-          <div className="relative bg-white p-6 rounded-lg shadow-md w-full md:w-[80%] lg:w-1/2">
-            <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              onClick={() => setShowSalesModal(false)}
-            >
-              ✖
-            </button>
-            <h2 className="text-lg font-semibold mb-4 text-center">
-              Add New Sale Entry
-            </h2>
-            <p>Form to add a new sale will go here.</p>
-            <div className="flex justify-end mt-4">
-              <button
-                className="px-4 py-2 bg-gray-200 rounded-md"
-                onClick={() => setShowSalesModal(false)}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Existing modals and components */}
-    </div>
-  );
-};
-
-
-
-
-
-
-
-
-
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-      <div className="flex justify-between flex-col 2xl:h-[20em] 2xl:flex-row row-span-3 py-2 gap-2 px-2 items-center bg-gray-100 rounded-xl">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1 md:p-4">
+      <div className="flex justify-between flex-col 2xl:h-[20em] 2xl:flex-row md:row-span-3 py-2 gap-2 px-2 items-center bg-gray-100 rounded-xl">
         <img
           src={contact.front_image}
           alt="User Photo"
-          className="w-full md:min-w-[20em] xl:w-1/2 xl:min-w-[17em] h-full object-cover rounded-xl"
+          className="w-full  md:min-w-[20em] xl:w-1/2 xl:min-w-[17em] h-full object-cover rounded-xl"
         />
-         <img
+        <img
           src={userData.QrImage}
           alt="User Photo"
           className="w-full md:min-w-[20em] xl:w-1/2 h-full xl:min-w-[17em] object-cover rounded-xl"
@@ -370,160 +302,168 @@ const UserDetails = () => {
       </div>
 
       <div className="bg-gray-100 p-4 rounded-xl text-lg md:text-2xl flex flex-col justify-between">
-        <div className="flex justify-between"><span><strong>Address:</strong></span><span>{userData.address}</span></div>
-        <div className="flex justify-between"><span><strong>Business name:</strong></span><span>{contact.business_name}</span></div>
-        <div className="flex justify-between"><span><strong>Mobile no:</strong></span><span>{contact.phone_number}</span></div>
-        <div className="flex justify-between"><span><strong>Joining date:</strong></span><span>{contact.joining_date.split(" ")[0]}
-</span></div>
+        <div className="flex justify-between">
+          <span>
+            <strong>Address:</strong>
+          </span>
+          <span>{userData.address}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>
+            <strong>Business name:</strong>
+          </span>
+          <span>{contact.business_name}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>
+            <strong>Mobile no:</strong>
+          </span>
+          <span>{contact.phone_number}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>
+            <strong>Joining date:</strong>
+          </span>
+          <span>{contact.joining_date.split(" ")[0]}</span>
+        </div>
       </div>
 
       <div className="bg-gray-100 p-4 rounded-xl text-lg md:text-2xl">
         <h2 className="font-bold mb-2">Most Sold Clothes</h2>
         {clothesData.map((item, index, comp) => (
-  <p key={index} onClick={() => { setShowModal2(true); setIndexing(index); }}
-  className="flex justify-between mb-2 cursor-pointer">
-    <div className="flex items-center"><span>{item.name}</span></div>
-    <span>{item.sold}</span>
-    
-  </p>
-))}
-
+          <div
+            key={index}
+            onClick={() => {
+              setShowModal2(true);
+              setIndexing(index);
+            }}
+            className="flex justify-between mb-2 cursor-pointer"
+          >
+            <div className="flex items-center">
+              <span>{item.name}</span>
+            </div>
+            <span>{item.sold}</span>
+          </div>
+        ))}
       </div>
 
       <div className="bg-gray-100 p-4 rounded-xl text-lg md:text-2xl flex flex-col justify-between">
-        <div className="flex justify-between"><span><strong>Total Sold:</strong></span><span>{userData.totalSold}</span></div>
-        <div className="flex justify-between"><span><strong>Total Margin Remaining:</strong></span><span>{userData.totalMargin}</span></div>
-        <div className="flex justify-between"><span><strong>Total items sold:</strong></span><span>{userData.totalItemsSold}</span></div>
+        <div className="flex justify-between">
+          <span>
+            <strong>Total Sold:</strong>
+          </span>
+          <span>{userData.totalSold}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>
+            <strong>Total Margin Remaining:</strong>
+          </span>
+          <span>{userData.totalMargin}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>
+            <strong>Total items sold:</strong>
+          </span>
+          <span>{userData.totalItemsSold}</span>
+        </div>
       </div>
-
 
       <div className="overflow-x-auto md:col-span-2 xl:p-4">
-      <table className="min-w-full rounded-2xl border-2 border-gray-300">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="px-4 py-2 border text-left">Date</th>
-            <th className="px-4 py-2 border text-left">Amount</th>
-            <th className="px-4 py-2 border text-left">Screenshot</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentItems.map((item, index) => (
-            <tr key={index} className="border">
-              <td className="px-4 py-2 border">{item.date.split(" ")[0]}</td>
-              <td className="px-4 py-2 border">{item.amount}</td>
-              <td className="px-4 py-2 border">
-              <button
-                  onClick={() => handleOpenPopup(item.screenshot_src)}
-                  className="px-4 py-2 bg-white border-2 border-gray-300 rounded-md hover:bg-gray-200"
-                >
-                  Screen Shot
-                </button>
-              </td>
+        <table className="min-w-full rounded-2xl border-2 border-gray-300">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="px-4 py-2 border text-left">Date</th>
+              <th className="px-4 py-2 border text-left">Amount</th>
+              <th className="px-4 py-2 border text-left">Screenshot</th>
             </tr>
-          ))}
-        </tbody>
-        
-      </table>
+          </thead>
+          <tbody>
+            {Array.isArray(currentItems) && currentItems.length > 0 ? (
+              currentItems.map((item, index) => (
+                <tr key={index} className="border">
+                  <td className="px-4 py-2 border">
+                    {item.date?.split(" ")[0]}
+                  </td>
+                  <td className="px-4 py-2 border">{item.amount}</td>
+                  <td className="px-4 py-2 border">
+                    <button
+                      onClick={() => handleOpenPopup(item.screenshot_src)}
+                      className="px-4 py-2 bg-white border-2 border-gray-300 rounded-md hover:bg-gray-200"
+                    >
+                      Screen Shot
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={3} className="text-center py-4 text-gray-500">
+                  No purchases found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
 
-
-       {/* Popup */}
-       {showPopup && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-          <div className="bg-white p-4 rounded-lg max-w-3xl w-full">
-            <div className="flex justify-end">
-              <button
-                onClick={handleClosePopup}
-                className="text-gray-500 hover:text-black"
-              >
-                ✕
-              </button>
+        {/* Popup */}
+        {showPopup && (
+          <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+            <div className="bg-white p-4 rounded-lg max-w-3xl w-full">
+              <div className="flex justify-end">
+                <button
+                  onClick={handleClosePopup}
+                  className="text-gray-500 hover:text-black"
+                >
+                  ✕
+                </button>
+              </div>
+              <img
+                src={currentImage}
+                alt="Screenshot"
+                className="max-w-full max-h-[80vh] mx-auto"
+              />
             </div>
-            <img
-              src={currentImage}
-              alt="Screenshot"
-              className="max-w-full max-h-[80vh] mx-auto"
-            />
+          </div>
+        )}
+
+        {/* Pagination Controls */}
+        <div className="grid grid-cols-3 gap-3 md:grid-cols-3 w-full  mx-auto justify-center p-4">
+          <button
+            onClick={() => handlePageChange("prev")}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-200 w-full md:w-fit rounded-md disabled:bg-gray-100"
+          >
+            Previous
+          </button>
+          <span className="px-4 py-2 justify-self-center">
+            Page {currentPage}
+          </span>
+          <div className="justify-self-end">
+            <button
+              onClick={() => handlePageChange("next")}
+              disabled={startIndex + itemsPerPage >= Olddata?.length}
+              className="px-4 py-2  bg-gray-200 rounded-md w-full md:w-fit disabled:bg-gray-100"
+            >
+              Next
+            </button>
+            <button
+              className="px-4 py-2 ml-5 hidden md:inline-block col-span-3 md:col-span-1 self-center w-full bg-gray-200 rounded-md md:w-fit disabled:bg-gray-100"
+              onClick={() => setShowModal(true)}
+            >
+              Add To Table
+            </button>
           </div>
         </div>
-      )}
-      
-
-      {/* Pagination Controls */}
-      <div className="grid grid-cols-3 gap-3 md:grid-cols-3 w-full  mx-auto justify-center p-4">
-        <button
-          onClick={() => handlePageChange("prev")}
-          disabled={currentPage === 1}
-          className="px-4 py-2 bg-gray-200 w-full md:w-fit rounded-md disabled:bg-gray-100"
-        >
-          Previous
-        </button>
-        <span className="px-4 py-2 justify-self-center">Page {currentPage}</span>
-        <div className="justify-self-end">
-        <button
-          onClick={() => handlePageChange("next")}
-          disabled={startIndex + itemsPerPage >= Olddata?.length}
-          className="px-4 py-2  bg-gray-200 rounded-md w-full md:w-fit disabled:bg-gray-100"
-        >
-          Next
-        </button>
-        <button
-        className="px-4 py-2 ml-5 hidden md:inline-block col-span-3 md:col-span-1 self-center w-full bg-gray-200 rounded-md md:w-fit disabled:bg-gray-100"
-        onClick={() => setShowModal(true)}
-      >
-        Add To Table
-      </button>
-
-        </div>
-
-        {/* <button
-        className="px-4 py-2 md:hidden col-span-3 md:col-span-1 self-center w-full bg-gray-200 rounded-md md:w-fit disabled:bg-gray-100"
-        onClick={() => setShowModal(true)}
-      >
-        Add To Table
-      </button> */}
       </div>
-    </div>
 
-   
-   {/* <div className="w-full flex flex-col"> <table className="w-full rounded-2xl border-2 border-gray-300">
-  <thead>
-    <tr className="bg-gray-100 w-full">
-      <th className="px-4 py-2 border text-left">Date</th>
-      <th className="px-4 py-2 border text-left">Status</th>
-      <th className="px-4 py-2 border text-left">Amount</th>
-    </tr>
-  </thead>
-  <tbody>
-    {currentItem.map((item, index) => (
-      <tr key={index} className="border w-full">
-        <td className="px-4 py-2 border">{item.date}</td>
-        <td className="px-4 py-2 border">{item.status}</td>
-        <td className="px-4 py-2 border">{item.amount}</td>
-      </tr>
-    ))}
-  </tbody>
-</table>
-<div className="flex justify-between items-center mt-4 px-2">
-  <button
-    className="px-4 py-2 bg-gray-200 text-gray-600 rounded-md cursor-not-allowed"
-    disabled
-  >
-    Previous
-  </button>
-  <span className="text-black font-semibold">1 / 3</span>
-  <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-    Next
-  </button>
-</div>
-</div> */}
+      <SalesTable items={currentItem} />
 
-<SalesTable items={currentItem} />
-
-
-
-    {showModal2 && (
+      {showModal2 && (
         <div className="fixed inset-0 flex items-center justify-center px-3 bg-black/50 z-50">
-          <div ref={modalRef2} className="relative bg-white p-6 rounded-lg shadow-md  w-full md:w-[80%] lg:w-1/2">
+          <div
+            ref={modalRef2}
+            className="relative bg-white p-6 rounded-lg shadow-md  w-full md:w-[80%] lg:w-1/2"
+          >
             {/* Cross Button to Close Modal */}
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -534,18 +474,20 @@ const UserDetails = () => {
             >
               ✖
             </button>
-            {indexing===0 && <GirlChild />}
-            {indexing===1 && <BoyChild />}
-            {indexing===2 && <Men/>}
-            {indexing===3 && <Women/>}
-            </div>
-            </div>
-    )}
-    
+            {indexing === 0 && <GirlChild />}
+            {indexing === 1 && <BoyChild />}
+            {indexing === 2 && <Men />}
+            {indexing === 3 && <Women />}
+          </div>
+        </div>
+      )}
 
-    {showModal && (
+      {showModal && (
         <div className="fixed inset-0 flex items-center justify-center px-3 bg-black/50 z-50">
-          <div ref={modalRef} className="relative bg-white p-6 rounded-lg shadow-md  w-full md:w-[80%] lg:w-1/2">
+          <div
+            ref={modalRef}
+            className="relative bg-white p-6 rounded-lg shadow-md  w-full md:w-[80%] lg:w-1/2"
+          >
             {/* Cross Button to Close Modal */}
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -565,27 +507,27 @@ const UserDetails = () => {
               {/* Image Input */}
               <div className="mb-4">
                 <div className="flex flex-col md:flex-row justify-between">
-                <label className="block mb-1">Upload Image:</label>
-                <input
-                  type="file"
-                  className="bg-gray-200 p-2 rounded-2xl cursor-pointer"
-                  accept=".jpg,.jpeg,.png"
-                  {...register("image", {
-                    required: "Image is required",
-                    validate: {
-                      acceptedFormats: (files) =>
-                        ["image/jpeg", "image/jpg", "image/png"].includes(
-                          files[0]?.type
-                        ) || "Only JPG, JPEG, and PNG formats are allowed",
-                    },
-                  })}
-                />
-                {errors.image && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.image.message}
-                  </p>
-                )}
-              </div>
+                  <label className="block mb-1">Upload Image:</label>
+                  <input
+                    type="file"
+                    className="bg-gray-200 p-2 rounded-2xl cursor-pointer"
+                    accept=".jpg,.jpeg,.png"
+                    {...register("image", {
+                      required: "Image is required",
+                      validate: {
+                        acceptedFormats: (files) =>
+                          ["image/jpeg", "image/jpg", "image/png"].includes(
+                            files[0]?.type,
+                          ) || "Only JPG, JPEG, and PNG formats are allowed",
+                      },
+                    })}
+                  />
+                  {errors.image && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.image.message}
+                    </p>
+                  )}
+                </div>
               </div>
 
               {/* Amount Input */}
@@ -623,7 +565,8 @@ const UserDetails = () => {
                   max={getTodayDate()}
                   {...register("date", {
                     validate: (value) =>
-                      !value || value <= getTodayDate() ||
+                      !value ||
+                      value <= getTodayDate() ||
                       "Date cannot be in the future",
                   })}
                 />
@@ -658,11 +601,9 @@ const UserDetails = () => {
       )}
     </div>
   );
-  
 };
 
 export default UserDetails;
-
 
 const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
   const isExpanded = index === expandedIndex;
@@ -670,15 +611,17 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
   return (
     <>
       <tr
-         className={`cursor-pointer border-b hover:bg-gray-100 ${
-          isExpanded ? 'bg-gray-200' : 'bg-white'
+        className={`cursor-pointer border-b hover:bg-gray-100 ${
+          isExpanded ? "bg-gray-200" : "bg-white"
         }`}
         onClick={() => onExpand(index)}
       >
         <td className="py-2 px-4">{data.date}</td>
-        <td className="py-2 px-4">{data.status}</td>
+        <td className="py-2 px-4">
+          {data.status === 1 ? "Paid" : "Not Paid"}
+        </td>
+
         <td className="py-2 px-4">{data.amount}</td>
-     
       </tr>
       {isExpanded && (
         <tr className="bg-gray-50">
@@ -694,13 +637,25 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.details.map((item, i) => (
-                    <tr key={i} className="border-b">
-                      <td className="py-1 px-2">{item.item_name}</td>
-                      <td className="py-1 px-2">{item.quantity}</td>
-                      <td className="py-1 px-2">{item.total}Rs</td>
+                  {Array.isArray(data.user_purchase_details) &&
+                  data.user_purchase_details.length > 0 ? (
+                    data.user_purchase_details.map((item, i) => (
+                      <tr key={i} className="border-b">
+                        <td className="py-1 px-2">{item.item_name}</td>
+                        <td className="py-1 px-2">{item.item_quantity}</td>
+                        <td className="py-1 px-2">{item.item_total} Rs</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={3}
+                        className="py-2 px-4 text-center text-gray-500"
+                      >
+                        No item details available.
+                      </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>
@@ -713,13 +668,95 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
 
 const SalesTable = ({ items }) => {
   const [expandedIndex, setExpandedIndex] = useState(null);
+  const [salesCurrentPage, setSalesCurrentPage] = useState(1);
+  const salesItemsPerPage = 4;
+  const salesStartIndex = (salesCurrentPage - 1) * salesItemsPerPage;
+  const salesCurrentItems = items.slice(
+    salesStartIndex,
+    salesStartIndex + salesItemsPerPage,
+  );
+  const [showModal3, setShowModal3] = useState(false);
+  const [subItems, setSubItems] = useState([]); // State for dynamic sub-items
+
+  const location = useLocation();
+  const contact = location.state?.contact;
 
   const handleExpand = (index) => {
     setExpandedIndex((prevIndex) => (prevIndex === index ? null : index));
   };
 
+  const handleSalesPageChange = (direction) => {
+    if (direction === "prev" && salesCurrentPage > 1) {
+      setSalesCurrentPage(salesCurrentPage - 1);
+    } else if (
+      direction === "next" &&
+      salesCurrentPage < Math.ceil(items.length / salesItemsPerPage)
+    ) {
+      setSalesCurrentPage(salesCurrentPage + 1);
+    }
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+
+  const addSubItem = () => {
+    setSubItems([...subItems, { name: "", quantity: "", total: "" }]);
+  };
+
+  const removeSubItem = (index) => {
+    setSubItems(subItems.filter((_, i) => i !== index));
+  };
+
+  const handleSubItemChange = (index, field, value) => {
+    const newSubItems = [...subItems];
+    newSubItems[index][field] = value;
+    setSubItems(newSubItems);
+  };
+
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+
+    // Append primitive form fields
+    formData.append("phone_number", contact.phone_number);
+
+    // Append other form fields from data
+    for (const key in data) {
+      formData.append(key, data[key]);
+    }
+
+    // Append subItems array as JSON string
+    formData.append("subItems", JSON.stringify(subItems));
+
+    try {
+      const response = await axios.post(
+        "https://zivaworld.online/microservices/add_user_purchase.php",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        console.log("success response", response.data);
+      }
+    } catch (error) {
+      console.log("error response", error);
+    }
+
+    console.log("Form Data:", formData);
+    setShowModal3(false);
+    setSubItems([]); // Clear sub-items after submission
+    reset(); // Reset form fields
+  };
+
   return (
-    <div className="overflow-x-auto mt-8 min-w-full flex flex-col w-[100%] col-span-2 ">
+    <div className="overflow-y-auto min-h-[25em] mt-8 min-w-full flex flex-col w-[100%] md:col-span-2">
       <h2 className="text-xl font-bold mb-4">Sales Summary</h2>
       <table className="min-w-full bg-white shadow rounded">
         <thead>
@@ -727,21 +764,227 @@ const SalesTable = ({ items }) => {
             <th className="py-2 px-4">Date</th>
             <th className="py-2 px-4">Status</th>
             <th className="py-2 px-4">Amount</th>
-           
           </tr>
         </thead>
         <tbody>
-          {items.map((entry, index) => (
-            <CollapsibleTableRow
-              key={index}
-              data={entry}
-              index={index}
-              expandedIndex={expandedIndex}
-              onExpand={handleExpand}
-            />
-          ))}
+          {Array.isArray(salesCurrentItems) && salesCurrentItems.length > 0 ? (
+            salesCurrentItems.map((entry, index) => (
+              <CollapsibleTableRow
+                key={index}
+                data={entry}
+                index={index}
+                expandedIndex={expandedIndex}
+                onExpand={handleExpand}
+              />
+            ))
+          ) : (
+            <tr>
+              <td colSpan={3} className="text-center py-4 text-gray-500">
+                No sales records found.
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
+      <div className="flex justify-between gap-3 w-full mx-auto p-4">
+        <button
+          onClick={() => handleSalesPageChange("prev")}
+          disabled={salesCurrentPage === 1}
+          className="px-4 py-2 bg-gray-200 w-full md:w-fit rounded-md disabled:bg-gray-100"
+        >
+          Previous
+        </button>
+        <span className="px-4 py-2 justify-self-center">
+          Page {salesCurrentPage}
+        </span>
+        <div className="flex justify-between gap-5">
+          <button
+            onClick={() => handleSalesPageChange("next")}
+            disabled={salesStartIndex + salesItemsPerPage >= items.length}
+            className="px-4 py-2 bg-gray-200 rounded-md w-full md:w-fit disabled:bg-gray-100"
+          >
+            Next
+          </button>
+          <button
+            onClick={() => setShowModal3(true)}
+            className="px-4 py-2 bg-gray-200 rounded-md w-full md:w-fit"
+          >
+            Add to table
+          </button>
+        </div>
+      </div>
+
+      {showModal3 && (
+        <div
+          onClick={() => {
+            setShowModal3(false);
+            setSubItems([]); // Clear sub-items when modal is closed
+            reset(); // Reset form fields
+          }}
+          className="fixed  inset-0   bg-black/50 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white relative  rounded-lg overflow-y-auto max-h-[30em] md:max-h-[45em] shadow-lg w-full h-full  max-w-[69em]"
+          >
+            <div className="bg-white sticky h-20 top-0 left-0 flex w-full">
+              <h3 className="text-lg p-4 font-bold mb-4">Add New Sale</h3>
+            </div>
+            <form
+              className="flex px-5 relative flex-col items-center justify-center"
+              onSubmit={handleSubmit(onSubmit)}
+            >
+              <div className="grid md:grid-cols-3 md:grid-rows-2 lg:grid-cols-4 gap-5 w-full max-w-7xl">
+                <div className="border p-2 w-full rounded-sm">
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium mb-1">
+                      Date
+                    </label>
+                    <input
+                      type="date"
+                      {...register("date", { required: "Date is required" })}
+                      className="w-full p-2 border rounded"
+                    />
+                    {errors.date && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.date.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium mb-1">
+                      Status
+                    </label>
+                    <select
+                      {...register("status", {
+                        required: "Status is required",
+                      })}
+                      className="w-full p-2 border rounded"
+                      defaultValue=""
+                    >
+                      <option value="" disabled>
+                        Select status
+                      </option>
+                      <option value="Completed">Completed</option>
+                      <option value="Not Completed">Not Completed</option>
+                    </select>
+                    {errors.status && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.status.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium mb-1">
+                      Amount
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      placeholder="e.g., 100.00"
+                      {...register("amount", {
+                        required: "Amount is required",
+                        valueAsNumber: true,
+                      })}
+                      className="w-full p-2 border rounded no-spinner"
+                    />
+                    {errors.amount && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.amount.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                {/* Dynamic Sub-Item Inputs */}
+                {subItems.map((item, index) => (
+                  <div key={index} className="border p-2 w-full rounded">
+                    <div className="flex justify-between items-center">
+                      <label className="block text-sm font-medium mb-1">
+                        Item {index + 1}
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => removeSubItem(index)}
+                        className="text-red-500 cursor-pointer text-sm"
+                      >
+                        <ImCross />
+                      </button>
+                    </div>
+
+                    <label className="block text-sm font-medium mb-1">
+                      Item Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={item.name}
+                      onChange={(e) =>
+                        handleSubItemChange(index, "name", e.target.value)
+                      }
+                      className="w-full p-2 border rounded mb-2"
+                    />
+
+                    <label className="block text-sm font-medium mb-1">
+                      Quantity
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      value={item.quantity}
+                      onChange={(e) =>
+                        handleSubItemChange(index, "quantity", e.target.value)
+                      }
+                      className="w-full p-2 border rounded mb-2 no-spinner"
+                    />
+
+                    <label className="block text-sm font-medium mb-1">
+                      Total
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      required
+                      value={item.total}
+                      onChange={(e) =>
+                        handleSubItemChange(index, "total", e.target.value)
+                      }
+                      className="w-full p-2 border rounded no-spinner"
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="space-x-3 sticky bg-white pt-10 bottom-0 h-full  flex justify-center md:justify-end w-full">
+                <button
+                  type="button"
+                  onClick={addSubItem}
+                  className="mb-4 px-4 py-2 h-fit bg-green-500 text-white rounded"
+                >
+                  + Add Item
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowModal3(false);
+                    setSubItems([]); // Clear sub-items
+                    reset(); // Reset form
+                  }}
+                  className="px-4 py-2 h-fit bg-gray-200 rounded-md"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 h-fit bg-blue-500 text-white rounded-md"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

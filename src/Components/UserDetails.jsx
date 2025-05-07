@@ -295,7 +295,7 @@ const UserDetails = () => {
           className="w-full  md:min-w-[20em] xl:w-1/2 xl:min-w-[17em] h-full object-cover rounded-xl"
         />
         <img
-          src={userData.QrImage}
+          src={userData.qr_image}
           alt="User Photo"
           className="w-full md:min-w-[20em] xl:w-1/2 h-full xl:min-w-[17em] object-cover rounded-xl"
         />

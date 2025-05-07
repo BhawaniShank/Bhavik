@@ -32,17 +32,60 @@ const UserDetails = () => {
     return <div>No contact data found.</div>;
   }
 
-  const userData = {
-    address: "Delhi 345",
-    businessName: contact.name,
-    mobileNo: "1234567890",
-    joiningDate: "01-01-2020",
-    totalSold: 3900,
-    totalMargin: "5",
-    totalItemsSold: 500,
-    image: "https://picsum.photos/200",
-    QrImage: "https://picsum.photos/300",
-  };
+  
+  const [userData, setUserData] = useState({
+    address: "",
+    businessName: "",
+    mobileNo: "",
+    joiningDate: "",
+    totalSold: 0,
+    totalMargin: 0,
+    totalItemsSold: 0,
+    image: "",
+    QrImage: "",
+  });
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = new FormData();
+      data.append("phone_number", "9660992549");
+  
+      try {
+        const response = await axios.post(
+          "https://zivaworld.online/microservices/fetch_user.php",
+          data,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+  
+        if (response.status === 200) {
+          const res = response.data.data[0];
+  
+          setUserData({
+            address: res.address || "",
+            businessName: res.business_name || "",
+            mobileNo: res.phone_number || "",
+            joiningDate: res.joining_date || "",
+            totalSold: res.totalSold || 0,
+            totalMargin: res.totalMargin || 0,
+            totalItemsSold: res.totalItemsSold || 0,
+            image: res.front_image || "https://picsum.photos/200",
+            QrImage: res.qr_image || "https://picsum.photos/300",
+          });
+  
+          console.log("Fetched useffffffr data:", res);
+        }
+      } catch (error) {
+        console.log("Error fetching user data:", error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
 
   const [Olddata, setOlddata] = useState([]);
 
@@ -295,7 +338,7 @@ const UserDetails = () => {
           className="w-full  md:min-w-[20em] xl:w-1/2 xl:min-w-[17em] h-full object-cover rounded-xl"
         />
         <img
-          src={userData.qr_image}
+          src={userData.QrImage}
           alt="User Photo"
           className="w-full md:min-w-[20em] xl:w-1/2 h-full xl:min-w-[17em] object-cover rounded-xl"
         />

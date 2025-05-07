@@ -15,6 +15,17 @@ const UserDetails = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [currentImage, setCurrentImage] = useState("");
   const [currentItem, setCurrentItem] = useState([]);
+  const [userData, setUserData] = useState({
+    address: "",
+    businessName: "",
+    mobileNo: "",
+    joiningDate: "",
+    totalSold: 0,
+    totalMargin: 0,
+    totalItemsSold: 0,
+    image: "",
+    QrImage: "",
+  });
 
   const handleOpenPopup = (src) => {
     setCurrentImage(src);
@@ -33,22 +44,12 @@ const UserDetails = () => {
   }
 
   
-  const [userData, setUserData] = useState({
-    address: "",
-    businessName: "",
-    mobileNo: "",
-    joiningDate: "",
-    totalSold: 0,
-    totalMargin: 0,
-    totalItemsSold: 0,
-    image: "",
-    QrImage: "",
-  });
+
   
   useEffect(() => {
     const fetchData = async () => {
       const data = new FormData();
-      data.append("phone_number", "9660992549");
+      data.append("phone_number", contact.phone_number);
   
       try {
         const response = await axios.post(
@@ -73,7 +74,7 @@ const UserDetails = () => {
             totalMargin: res.totalMargin || 0,
             totalItemsSold: res.totalItemsSold || 0,
             image: res.front_image || "https://picsum.photos/200",
-            QrImage: res.qr_image || "https://picsum.photos/300",
+            QrImage: res.qr_image,
           });
   
           console.log("Fetched useffffffr data:", res);

@@ -34,6 +34,7 @@ const AdminPage = () => {
     // Append files directly
     formData.append('image', data.image[0]);
     formData.append('qr', data.qr[0]);
+    console.log('Formmmmmm Data:', data);
   
     try {
       const response = await axios.post(

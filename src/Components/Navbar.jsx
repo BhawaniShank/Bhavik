@@ -102,7 +102,8 @@ const downloadApkFile = () => {
             <nav className="mt-28 lg:mt-[2vh] space-y-2">
               <Link
                 to="/"
-                className="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500"
+                className="flex items-center px-4 py-2  hover:bg-orange-500"
+                style={{color: "white"}}
               >
                 <span className="mr-2">
                   <MdDashboard />
@@ -112,7 +113,8 @@ const downloadApkFile = () => {
 
               <Link
                 to="/contact"
-                className="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500"
+                className="flex items-center px-4 py-2  hover:bg-orange-500"
+                style={{color: "white"}}
               >
                 <span className="mr-2">
                   <FaUser />
@@ -121,7 +123,8 @@ const downloadApkFile = () => {
               </Link>
               <Link
                to="/admin"
-                className="flex items-center px-4 py-2 text-gray-100 hover:bg-orange-500"
+                className="flex items-center px-4 py-2  hover:bg-orange-500"
+                style={{color: "white"}}
               >
                 <span className="mr-2">
                   <UserPlus />

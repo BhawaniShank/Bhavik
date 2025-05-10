@@ -329,20 +329,70 @@ const UserDetails = () => {
       document.removeEventListener("mousedown", handleClickOutside2);
     };
   }, [showModal2]);
+  
+    const [isQrOpen, setQrOpen] = useState(false);
+    const [isFrontOpen, setFrontOpen] = useState(false);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1 md:p-4">
       <div className="flex justify-between flex-col 2xl:h-[20em] 2xl:flex-row md:row-span-3 py-2 gap-2 px-2 items-center bg-gray-100 rounded-xl">
         <img
           src={contact.front_image}
+          onClick={() => setFrontOpen(true)}
           alt="User Photo"
-          className="w-full  md:min-w-[20em] xl:w-1/2 xl:min-w-[17em] h-full object-cover rounded-xl"
+          className="w-full  md:min-w-[20em] max-h-[20em] xl:w-1/2 xl:min-w-[17em] h-full object-cover rounded-xl"
         />
+        {isFrontOpen && (
+          <div
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+            onClick={() => setFrontOpen(false)}
+          >
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setFrontOpen(false);
+              }}
+              className="absolute top-4 right-4 text-white text-5xl font-bold z-50"
+            >
+              &times;
+            </button>
+            <img
+              src={contact.front_image}
+              alt="Fullscreen Image"
+              className="max-w-full max-h-[80%] rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        )}
         <img
           src={userData.QrImage}
+           onClick={() => setQrOpen(true)}
           alt="User Photo"
-          className="w-full md:min-w-[20em] xl:w-1/2 h-full xl:min-w-[17em] object-cover rounded-xl"
+          className="w-full md:min-w-[20em] max-h-[20em] xl:w-1/2 h-full xl:min-w-[17em] object-cover rounded-xl"
         />
+        {isQrOpen && (
+          <div
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+            onClick={() => setQrOpen(false)}
+          >
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setQrOpen(false);
+              }}
+              className="absolute top-4 right-4 text-white text-3xl font-bold z-50"
+            >
+              &times;
+            </button>
+            <img
+              src={userData.QrImage}
+              alt="Fullscreen Image"
+              className="max-w-full max-h-[80%] rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        )}
+        
       </div>
 
       <div className="bg-gray-100 p-4 rounded-xl text-lg md:text-2xl flex flex-col justify-between">
@@ -471,32 +521,42 @@ const UserDetails = () => {
         )}
 
         {/* Pagination Controls */}
-        <div className="grid grid-cols-3 gap-3 md:grid-cols-3 w-full  mx-auto justify-center p-4">
+        <div className="grid grid-cols-3 gap-3 md:grid-cols-3 w-full mx-auto justify-center p-4">
           <button
             onClick={() => handlePageChange("prev")}
             disabled={currentPage === 1}
-            className="px-4 py-2 bg-gray-200 w-full md:w-fit rounded-md disabled:bg-gray-100"
+            className="px-4 py-2 bg-gray-200 w-full md:w-fit rounded-md disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
           >
-            Previous
+            <span className="w-full">Previous</span>
+            
           </button>
           <span className="px-4 py-2 justify-self-center">
             Page {currentPage}
           </span>
-          <div className="justify-self-end">
+          <div className="justify-self-end flex flex-col md:flex-row gap-2">
             <button
               onClick={() => handlePageChange("next")}
               disabled={startIndex + itemsPerPage >= Olddata?.length}
-              className="px-4 py-2  bg-gray-200 rounded-md w-full md:w-fit disabled:bg-gray-100"
+              className="px-4 py-2 bg-gray-200 rounded-md w-full md:w-fit disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
             >
-              Next
+              <span className="w-full">Next</span>
+              
             </button>
             <button
-              className="px-4 py-2 ml-5 hidden md:inline-block col-span-3 md:col-span-1 self-center w-full bg-gray-200 rounded-md md:w-fit disabled:bg-gray-100"
               onClick={() => setShowModal(true)}
+              className="px-4 py-2 hidden md:block bg-gray-200 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
             >
-              Add To Table
+              <span className="hidden md:inline">Add To Table</span>
+              <span className="md:hidden">+ Add</span>
             </button>
           </div>
+          <button
+              onClick={() => setShowModal(true)}
+              className="px-4 py-2 bg-gray-200 md:hidden col-span-3 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
+            >
+              <span className="hidden md:inline">Add To Table</span>
+              <span className="md:hidden">+ Add</span>
+            </button>
         </div>
       </div>
 
@@ -624,7 +684,8 @@ const UserDetails = () => {
               <div className="flex justify-end space-x-2">
                 <button
                   type="button"
-                  className="px-4 py-2 bg-gray-200 rounded-md"
+                  className="px-4 py-2 rounded-md"
+                  style={{backgroundColor:"#e5e7eb", border:"none",color:"black"}}                  
                   onClick={() => {
                     setShowModal(false);
                     reset();
@@ -634,7 +695,9 @@ const UserDetails = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                  className="px-4 py-2 rounded-md"
+                  style={{backgroundColor:"#2b7fff", border:"none",color:"white"}}
+                  
                 >
                   Submit
                 </button>
@@ -830,32 +893,40 @@ const SalesTable = ({ items }) => {
           )}
         </tbody>
       </table>
-      <div className="flex justify-between gap-3 w-full mx-auto p-4">
+      <div className="grid grid-cols-3 gap-3 md:grid-cols-3 w-full mx-auto p-4">
         <button
           onClick={() => handleSalesPageChange("prev")}
           disabled={salesCurrentPage === 1}
-          className="px-4 py-2 bg-gray-200 w-full md:w-fit rounded-md disabled:bg-gray-100"
+          className="px-4 py-2 bg-gray-200 w-full md:w-fit rounded-md disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
         >
-          Previous
+          <span className="w-full">Previous</span>
         </button>
         <span className="px-4 py-2 justify-self-center">
           Page {salesCurrentPage}
         </span>
-        <div className="flex justify-between gap-5">
+        <div className="justify-self-end flex flex-col md:flex-row gap-2">
           <button
             onClick={() => handleSalesPageChange("next")}
             disabled={salesStartIndex + salesItemsPerPage >= items.length}
-            className="px-4 py-2 bg-gray-200 rounded-md w-full md:w-fit disabled:bg-gray-100"
+            className="px-4 py-2 bg-gray-200 rounded-md w-full md:w-fit disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
           >
-            Next
+            <span className="w-full">Next</span>
           </button>
           <button
             onClick={() => setShowModal3(true)}
-            className="px-4 py-2 bg-gray-200 rounded-md w-full md:w-fit"
+            className="px-4 py-2 hidden md:block bg-gray-200 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
           >
-            Add to table
+            <span className="hidden md:inline">Add to table</span>
+            <span className="md:hidden">+ Add</span>
           </button>
         </div>
+        <button
+          onClick={() => setShowModal3(true)}
+          className="px-4 py-2 bg-gray-200 md:hidden col-span-3 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
+        >
+          <span className="hidden md:inline">Add to table</span>
+          <span className="md:hidden">+ Add</span>
+        </button>
       </div>
 
       {showModal3 && (
@@ -871,7 +942,7 @@ const SalesTable = ({ items }) => {
             onClick={(e) => e.stopPropagation()}
             className="bg-white relative  rounded-lg overflow-y-auto max-h-[30em] md:max-h-[45em] shadow-lg w-full h-full  max-w-[69em]"
           >
-            <div className="bg-white sticky h-20 top-0 left-0 flex w-full">
+            <div className="bg-white z-20 sticky h-20 top-0 left-0 flex w-full">
               <h3 className="text-lg p-4 font-bold mb-4">Add New Sale</h3>
             </div>
             <form
@@ -1003,7 +1074,8 @@ const SalesTable = ({ items }) => {
                 <button
                   type="button"
                   onClick={addSubItem}
-                  className="mb-4 px-4 py-2 h-fit bg-green-500 text-white rounded"
+                  className="mb-4 px-4 py-2 h-fit b  rounded"
+                  style={{backgroundColor:"#00c950", border:"none",color:"white"}}
                 >
                   + Add Item
                 </button>
@@ -1020,7 +1092,8 @@ const SalesTable = ({ items }) => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 h-fit bg-blue-500 text-white rounded-md"
+                  className="px-4 py-2 h-fit  text-white rounded-md"
+                  style={{backgroundColor:"#2b7fff", border:"none",color:"white"}}
                 >
                   Submit
                 </button>

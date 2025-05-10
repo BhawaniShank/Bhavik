@@ -158,7 +158,8 @@ const AdminPage = () => {
 
         <button
           type="submit"
-          className="bg-blue-500 md:w-[50%] mx-auto text-white p-2 rounded mt-4 md:col-span-2"
+          className="md:w-[50%] w-2/3 mx-auto p-2 rounded mt-4 md:col-span-2"
+          style={{color: "white",border:"none",backgroundColor:"#007bff"}}
         >
           Submit
         </button>

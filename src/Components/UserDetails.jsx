@@ -11,10 +11,13 @@ import Men from "./SoldCloths/Men";
 import Women from "./SoldCloths/Women";
 import axios from "axios";
 import { ImCross } from "react-icons/im";
+import { Trash } from "lucide-react";
 const UserDetails = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [currentImage, setCurrentImage] = useState("");
   const [currentItem, setCurrentItem] = useState([]);
+  const [showDelete1, setShowDelete1] = useState(false);
+  const [deleteIndex1, setDeleteIndex1] = useState(null);
   const [userData, setUserData] = useState({
     address: "",
     businessName: "",
@@ -333,6 +336,16 @@ const UserDetails = () => {
     const [isQrOpen, setQrOpen] = useState(false);
     const [isFrontOpen, setFrontOpen] = useState(false);
 
+  const deleterow1 = (index) => {
+    setShowDelete1(!showDelete1);
+    setDeleteIndex1(index);
+  };
+
+  const confirmDelete1 = () => {
+    setShowDelete1(!showDelete1);
+    // Add your delete API call here
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1 md:p-4">
       <div className="flex justify-between flex-col 2xl:h-[20em] 2xl:flex-row md:row-span-3 py-2 gap-2 px-2 items-center bg-gray-100 rounded-xl">
@@ -480,12 +493,24 @@ const UserDetails = () => {
                   </td>
                   <td className="px-4 py-2 border">{item.amount}</td>
                   <td className="px-4 py-2 border">
-                    <button
-                      onClick={() => handleOpenPopup(item.screenshot_src)}
-                      className="px-4 py-2 bg-white border-2 border-gray-300 rounded-md hover:bg-gray-200"
-                    >
-                      Screen Shot
-                    </button>
+                    <div className="flex justify-between items-center">
+                      <button
+                        onClick={() => handleOpenPopup(item.screenshot_src)}
+                        className="px-4 py-2 bg-white border-2 border-gray-300 rounded-md hover:bg-gray-200"
+                      >
+                        Screen Shot
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleterow1(index);
+                        }}
+                        className="cursor-pointer hidden md:block rounded-sm p-2"
+                        style={{ backgroundColor: "red", color: "white" }}
+                      >
+                        <Trash />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -498,6 +523,34 @@ const UserDetails = () => {
             )}
           </tbody>
         </table>
+
+        {showDelete1 && (
+          <div onClick={() => {
+            setShowDelete1(false);
+            setDeleteIndex1(null);
+          }} className="fixed inset-0 flex items-center justify-center bg-black/50">
+            <div onClick={(e) => {e.stopPropagation()}} className="bg-white p-4 rounded shadow-md">
+              <p>Are you sure you want to delete this item?</p>
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  onClick={() => {
+                    setShowDelete1(false);
+                    setDeleteIndex1(null);
+                  }}
+                  className="px-4 py-2 bg-gray-300 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete1}
+                  className="px-4 py-2 bg-red-500 text-white rounded"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Popup */}
         {showPopup && (
@@ -715,6 +768,21 @@ export default UserDetails;
 const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
   const isExpanded = index === expandedIndex;
 
+  const [showDelete2, setShowDelete2] = useState(false);
+
+  const [deleteIndex, setDeleteIndex] = useState(null);
+
+  const deleterow2 =(index)=>{
+   setShowDelete2(!showDelete2)
+   setDeleteIndex(index)
+  }
+
+  const confirmDelete2 =() =>{
+    setShowDelete2(!showDelete2)
+  
+  }
+
+
   return (
     <>
       <tr
@@ -723,12 +791,59 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
         }`}
         onClick={() => onExpand(index)}
       >
-        <td className="py-2 px-4">{data.date}</td>
+              <td className="py-2 px-4">{data.date?.split(" ")[0]}</td>
         <td className="py-2 px-4">
           {data.status === 1 ? "Paid" : "Not Paid"}
         </td>
 
-        <td className="py-2 px-4">{data.amount}</td>
+        <td className="py-2 px-4">{data.bill_no}</td>
+
+        <td className="py-2 px-4 flex w-full items-center justify-between">
+          {data.amount}
+          <button
+            onClick={(e , index) => {
+            
+              deleterow2(index);
+              e.stopPropagation();
+              
+            }}
+            className="cursor-pointer hidden md:block  rounded-sm p-2"
+            style={{ backgroundColor: "red", color: "white" }}
+          >
+            <Trash />
+          </button>
+        </td>
+
+       
+
+        {showDelete2 && (
+  <div  o onClick={() => {
+    setShowDelete2(false);
+    setDeleteIndex(null);
+  }} className="fixed inset-0 flex items-center justify-center bg-black/50">
+    <div onClick={(e)=>{e.stopPropagation()}} className="bg-white p-4 rounded shadow-md">
+      <p>Are you sure you want to delete this item?</p>
+      <div className="flex justify-end gap-2 mt-4">
+        <button
+          onClick={() => {
+            setShowDelete2(false);
+            setDeleteIndex(null);
+          }}
+          className="px-4 py-2 bg-gray-300 rounded"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={confirmDelete2}
+          className="px-4 py-2 bg-red-500 text-white rounded"
+        >
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+        
       </tr>
       {isExpanded && (
         <tr className="bg-gray-50">
@@ -768,7 +883,9 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
             </div>
           </td>
         </tr>
+        
       )}
+
     </>
   );
 };
@@ -870,6 +987,7 @@ const SalesTable = ({ items }) => {
           <tr className="bg-gray-300 text-left">
             <th className="py-2 px-4">Date</th>
             <th className="py-2 px-4">Status</th>
+            <th className="py-2 px-4">Bill</th>
             <th className="py-2 px-4">Amount</th>
           </tr>
         </thead>
@@ -946,7 +1064,7 @@ const SalesTable = ({ items }) => {
               <h3 className="text-lg p-4 font-bold mb-4">Add New Sale</h3>
             </div>
             <form
-              className="flex px-5 relative flex-col items-center justify-center"
+              className="flex px-5  flex-col items-center justify-center"
               onSubmit={handleSubmit(onSubmit)}
             >
               <div className="grid md:grid-cols-3 md:grid-rows-2 lg:grid-cols-4 gap-5 w-full max-w-7xl">
@@ -991,6 +1109,25 @@ const SalesTable = ({ items }) => {
                     )}
                   </div>
 
+                  <div className="absolute top-1 right-5 z-20">
+                    <label className="block text-sm font-medium mb-1">
+                      Bill Number
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter bill number"
+                      {...register("bill_no", {
+                        required: "Bill number is required",
+                      })}
+                      className="w-full p-2 border rounded"
+                    />
+                    {errors.bill_no && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.bill_no.message}
+                      </p>
+                    )}
+                  </div>
+
                   <div className="mb-4">
                     <label className="block text-sm font-medium mb-1">
                       Amount
@@ -1029,17 +1166,45 @@ const SalesTable = ({ items }) => {
                     </div>
 
                     <label className="block text-sm font-medium mb-1">
-                      Item Name
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={item.name}
-                      onChange={(e) =>
-                        handleSubItemChange(index, "name", e.target.value)
-                      }
-                      className="w-full p-2 border rounded mb-2"
-                    />
+  Item Name
+</label>
+<select
+  required
+  value={item.name}
+  onChange={(e) =>
+    handleSubItemChange(index, "name", e.target.value)
+  }
+  className="w-full p-2 border rounded mb-2"
+>
+  <option value="">Select Item</option>
+  {[
+    "Kurta Pajama",
+    "Silk Saree",
+    "Nehru Jacket",
+    "Lehenga Choli",
+    "Sherwani Set",
+    "Salwar Suit",
+    "Dhoti Kurta",
+    "Cotton Kurti",
+    "Ethnic Wear",
+    "Pathani Suit",
+    "Anarkali Dress",
+    "Kurta Set",
+    "Gown Dress",
+    "Banarasi Saree",
+    "Chanderi Suit",
+    "Linen Kurta",
+    "Denim Kurti",
+    "Zari Saree",
+    "Pattu Pavadai",
+    "Angrakha Kurta",
+  ].map((name, i) => (
+    <option key={i} value={name}>
+      {name}
+    </option>
+  ))}
+</select>
+
 
                     <label className="block text-sm font-medium mb-1">
                       Quantity

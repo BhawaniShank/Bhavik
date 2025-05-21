@@ -824,6 +824,7 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
     } catch (error) {
       console.log("error response", error);
     }
+    window.location.reload();
   
   }
 

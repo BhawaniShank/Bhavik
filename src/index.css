@@ -10,3 +10,11 @@
 .no-spinner {
   -moz-appearance: textfield;
 }
+
+
+/* @media screen and (min-width: 640px) {
+  
+  .incresetext{
+  font-size: 103%;
+}
+} */

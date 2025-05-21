@@ -1,4 +1,5 @@
 import React from "react";
+ 
 import { FaTshirt, FaMitten, FaSocks } from "react-icons/fa";
 import { GiTrousers } from "react-icons/gi";
 import { useState, useRef, useEffect } from "react";
@@ -14,7 +15,7 @@ import { ImCross } from "react-icons/im";
 import { Trash } from "lucide-react";
 const UserDetails = () => {
   const [showPopup, setShowPopup] = useState(false);
-  const [currentImage, setCurrentImage] = useState("");
+  const [currentImage, setCurrentImage] = useState(null);
   const [currentItem, setCurrentItem] = useState([]);
   const [showDelete1, setShowDelete1] = useState(false);
   const [deleteIndex1, setDeleteIndex1] = useState(null);
@@ -45,8 +46,6 @@ const UserDetails = () => {
   if (!contact) {
     return <div>No contact data found.</div>;
   }
-
-  
 
   
   useEffect(() => {
@@ -335,15 +334,37 @@ const UserDetails = () => {
   
     const [isQrOpen, setQrOpen] = useState(false);
     const [isFrontOpen, setFrontOpen] = useState(false);
+    const [deleteId, setDeleteId] = useState(null);
 
-  const deleterow1 = (index) => {
+
+  const deleterow1 = async (index, id) => {
     setShowDelete1(!showDelete1);
     setDeleteIndex1(index);
+    setDeleteId(id);
   };
 
-  const confirmDelete1 = () => {
+  const confirmDelete1 = async () => {
     setShowDelete1(!showDelete1);
-    // Add your delete API call here
+        const data = new FormData();
+    data.append("payment_id", deleteId);
+
+    try {
+      const response = await axios.post(
+        "https://zivaworld.online/microservices/delete_user_payment.php",
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+      if (response.status == 200) {
+        console.log("success response", response.data);
+      }
+    } catch (error) {
+      console.log("error response", error);
+    }
+    window.location.reload();
   };
 
   return (
@@ -457,9 +478,9 @@ const UserDetails = () => {
       <div className="bg-gray-100 p-4 rounded-xl text-lg md:text-2xl flex flex-col justify-between">
         <div className="flex justify-between">
           <span>
-            <strong>Total Sold:</strong>
+            <strong>Total Margin Earned:</strong>
           </span>
-          <span>{userData.totalSold}</span>
+          <span>{userData.totalMarginEarned}</span>
         </div>
         <div className="flex justify-between">
           <span>
@@ -479,21 +500,21 @@ const UserDetails = () => {
         <table className="min-w-full rounded-2xl border-2 border-gray-300">
           <thead>
             <tr className="bg-gray-100">
-              <th className="px-4 py-2 border text-left">Date</th>
-              <th className="px-4 py-2 border text-left">Amount</th>
-              <th className="px-4 py-2 border text-left">Screenshot</th>
+              <th className="px-4 py-2 lg:text-xl border text-left">Date</th>
+              <th className="px-4 py-2 lg:text-xl border text-left">Amount</th>
+              <th className="px-4 py-2 lg:text-xl border text-left">Screenshot</th>
             </tr>
           </thead>
           <tbody>
             {Array.isArray(currentItems) && currentItems.length > 0 ? (
               currentItems.map((item, index) => (
                 <tr key={index} className="border">
-                  <td className="px-4 py-2 border">
+                  <td className="px-4 lg:text-xl py-2 border">
                     {item.date?.split(" ")[0]}
                   </td>
-                  <td className="px-4 py-2 border">{item.amount}</td>
-                  <td className="px-4 py-2 border">
-                    <div className="flex justify-between items-center">
+                  <td className="px-4 lg:text-xl py-2 border">{item.amount}</td>
+                  <td className="px-4 lg:text-xl py-2 border">
+                    <span className="flex justify-between items-center">
                       <button
                         onClick={() => handleOpenPopup(item.screenshot_src)}
                         className="px-4 py-2 bg-white border-2 border-gray-300 rounded-md hover:bg-gray-200"
@@ -503,14 +524,14 @@ const UserDetails = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          deleterow1(index);
+                          deleterow1(index, item.id);
                         }}
                         className="cursor-pointer hidden md:block rounded-sm p-2"
                         style={{ backgroundColor: "red", color: "white" }}
                       >
                         <Trash />
                       </button>
-                    </div>
+                    </span>
                   </td>
                 </tr>
               ))
@@ -543,8 +564,11 @@ const UserDetails = () => {
                 </button>
                 <button
                   onClick={confirmDelete1}
+                  
                   className="px-4 py-2 bg-red-500 text-white rounded"
                 >
+    
+
                   Confirm
                 </button>
               </div>
@@ -568,7 +592,7 @@ const UserDetails = () => {
                 src={currentImage}
                 alt="Screenshot"
                 className="max-w-full max-h-[80vh] mx-auto"
-              />
+              />  
             </div>
           </div>
         )}
@@ -580,10 +604,10 @@ const UserDetails = () => {
             disabled={currentPage === 1}
             className="px-4 py-2 bg-gray-200 w-full md:w-fit rounded-md disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
           >
-            <span className="w-full">Previous</span>
+            <span className="w-full lg:text-xl">Previous</span>
             
           </button>
-          <span className="px-4 py-2 justify-self-center">
+          <span className="px-4 lg:text-xl py-2 justify-self-center">
             Page {currentPage}
           </span>
           <div className="justify-self-end flex flex-col md:flex-row gap-2">
@@ -592,14 +616,14 @@ const UserDetails = () => {
               disabled={startIndex + itemsPerPage >= Olddata?.length}
               className="px-4 py-2 bg-gray-200 rounded-md w-full md:w-fit disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
             >
-              <span className="w-full">Next</span>
+              <span className="w-full lg:text-xl">Next</span>
               
             </button>
             <button
               onClick={() => setShowModal(true)}
               className="px-4 py-2 hidden md:block bg-gray-200 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
             >
-              <span className="hidden md:inline">Add To Table</span>
+              <span className="hidden md:inline lg:text-xl">Add To Table</span>
               <span className="md:hidden">+ Add</span>
             </button>
           </div>
@@ -647,27 +671,27 @@ const UserDetails = () => {
           >
             {/* Cross Button to Close Modal */}
             <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              className="absolute top-2 lg:text-2xl right-2 text-black cursor-pointer hover:text-gray-700"
               onClick={() => {
                 setShowModal(false);
                 reset();
               }}
             >
-              ✖
+              <ImCross />
             </button>
 
-            <h2 className="text-lg font-semibold mb-4 text-center">
+            <h2 className="text-lg lg:text-xl font-semibold mb-4 text-center">
               Upload Image, Amount & Date
             </h2>
 
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form className="lg:text-xl" onSubmit={handleSubmit(onSubmit)}>
               {/* Image Input */}
               <div className="mb-4">
                 <div className="flex flex-col md:flex-row justify-between">
                   <label className="block mb-1">Upload Image:</label>
                   <input
                     type="file"
-                    className="bg-gray-200 p-2 rounded-2xl cursor-pointer"
+                    className="bg-gray-200  p-2 rounded-2xl cursor-pointer"
                     accept=".jpg,.jpeg,.png"
                     {...register("image", {
                       required: "Image is required",
@@ -692,7 +716,7 @@ const UserDetails = () => {
                 <label className="block mb-1">Amount:</label>
                 <input
                   type="number"
-                  className="border p-2 rounded w-full"
+                  className="border no-spinner p-2 rounded w-full"
                   placeholder="Enter amount"
                   {...register("amount", {
                     required: "Amount is required",
@@ -769,16 +793,37 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
   const isExpanded = index === expandedIndex;
 
   const [showDelete2, setShowDelete2] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const [deleteIndex, setDeleteIndex] = useState(null);
 
   const deleterow2 =(index)=>{
    setShowDelete2(!showDelete2)
    setDeleteIndex(index)
+   setDeleteId(data.id)
   }
 
-  const confirmDelete2 =() =>{
+  const confirmDelete2 =(id) =>{
     setShowDelete2(!showDelete2)
+
+    const data = new FormData();
+    data.append("purchase_id", deleteId);
+    try {
+      const response = axios.post(
+        "https://zivaworld.online/microservices/delete_user_purchase.php",
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+      if (response.status == 200) {
+        console.log("success response", response.data);
+      }
+    } catch (error) {
+      console.log("error response", error);
+    }
   
   }
 
@@ -796,14 +841,14 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
           {data.status === 1 ? "Paid" : "Not Paid"}
         </td>
 
-        <td className="py-2 px-4">{data.bill_no}</td>
+        <td className="py-2 px-4">{data.bill_number}</td>
 
         <td className="py-2 px-4 flex w-full items-center justify-between">
           {data.amount}
           <button
             onClick={(e , index) => {
             
-              deleterow2(index);
+              deleterow2(index, data.id);
               e.stopPropagation();
               
             }}
@@ -852,9 +897,10 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
               <h3 className="font-semibold mb-2">Item Details:</h3>
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left border-b">
+                  <tr className="text-left lg:text-lg border-b">
                     <th className="py-1 px-2">Item Name</th>
                     <th className="py-1 px-2">Quantity</th>
+                    <th className="py-1 px-2">Margin</th>
                     <th className="py-1 px-2">Total</th>
                   </tr>
                 </thead>
@@ -862,9 +908,10 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
                   {Array.isArray(data.user_purchase_details) &&
                   data.user_purchase_details.length > 0 ? (
                     data.user_purchase_details.map((item, i) => (
-                      <tr key={i} className="border-b">
+                      <tr key={i} className="border-b text-lg">
                         <td className="py-1 px-2">{item.item_name}</td>
                         <td className="py-1 px-2">{item.item_quantity}</td>
+                        <td className="py-1 px-2">{item.margin} Rs</td>
                         <td className="py-1 px-2">{item.item_total} Rs</td>
                       </tr>
                     ))
@@ -951,6 +998,7 @@ const SalesTable = ({ items }) => {
     for (const key in data) {
       formData.append(key, data[key]);
     }
+    console.log("data", data);
 
     // Append subItems array as JSON string
     formData.append("subItems", JSON.stringify(subItems));
@@ -981,8 +1029,8 @@ const SalesTable = ({ items }) => {
 
   return (
     <div className="overflow-y-auto min-h-[25em] mt-8 min-w-full flex flex-col w-[100%] md:col-span-2">
-      <h2 className="text-xl font-bold mb-4">Sales Summary</h2>
-      <table className="min-w-full bg-white shadow rounded">
+      <h2 className="text-2xl font-bold mb-4">Sales Summary</h2>
+      <table className="min-w-full lg:text-xl bg-white shadow rounded">
         <thead>
           <tr className="bg-gray-300 text-left">
             <th className="py-2 px-4">Date</th>
@@ -1011,7 +1059,7 @@ const SalesTable = ({ items }) => {
           )}
         </tbody>
       </table>
-      <div className="grid grid-cols-3 gap-3 md:grid-cols-3 w-full mx-auto p-4">
+      <div className="grid  grid-cols-3 gap-3 md:grid-cols-3 w-full lg:text-xl mx-auto p-4">
         <button
           onClick={() => handleSalesPageChange("prev")}
           disabled={salesCurrentPage === 1}
@@ -1109,7 +1157,7 @@ const SalesTable = ({ items }) => {
                     )}
                   </div>
 
-                  <div className="absolute top-1 right-5 z-20">
+                  <div className="z-20">
                     <label className="block text-sm font-medium mb-1">
                       Bill Number
                     </label>
@@ -1128,7 +1176,7 @@ const SalesTable = ({ items }) => {
                     )}
                   </div>
 
-                  <div className="mb-4">
+                  <div className="my-4">
                     <label className="block text-sm font-medium mb-1">
                       Amount
                     </label>
@@ -1232,6 +1280,26 @@ const SalesTable = ({ items }) => {
                       }
                       className="w-full p-2 border rounded no-spinner"
                     />
+
+                    <div className="z-20">
+
+                    <label className="block text-sm font-medium my-2">
+                     Margin
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter margin"
+                      onChange={(e) =>
+                        handleSubItemChange(index, "margin", e.target.value)
+                      }
+                      className="w-full p-2 border rounded"
+                    />
+                    {errors.margin && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.bill_no.margin}
+                      </p>
+                    )}
+                  </div>
                   </div>
                 ))}
               </div>

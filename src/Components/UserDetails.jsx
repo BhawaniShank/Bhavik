@@ -670,24 +670,6 @@ const UserDetails = () => {
         </div>
       </div>
 
-      <div className="bg-gray-100 p-4 rounded-xl text-lg md:text-2xl">
-        <h2 className="font-bold mb-2">Most Sold Clothes</h2>
-        {clothesData.map((item, index, comp) => (
-          <div
-            key={index}
-            onClick={() => {
-              setShowModal2(true);
-              setIndexing(index);
-            }}
-            className="flex justify-between mb-2 cursor-pointer"
-          >
-            <div className="flex items-center">
-              <span>{item.name}</span>
-            </div>
-            <span>{item.sold}</span>
-          </div>
-        ))}
-      </div>
 
       <div className="bg-gray-100 p-4 rounded-xl text-lg md:text-2xl flex flex-col justify-between">
         <div className="flex justify-between">

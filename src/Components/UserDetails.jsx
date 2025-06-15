@@ -13,6 +13,9 @@ import Women from "./SoldCloths/Women";
 import axios from "axios";
 import { ImCross } from "react-icons/im";
 import { Trash } from "lucide-react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const UserDetails = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [currentImage, setCurrentImage] = useState(null);
@@ -367,6 +370,203 @@ const UserDetails = () => {
     window.location.reload();
   };
 
+
+  const [showDeletedPayments, setShowDeletedPayments] = useState(false);
+
+  const DeletedPaymentsModal = () => {
+    const [deletedPaymentsPage, setDeletedPaymentsPage] = useState(1);
+    const [showRestoreDialog, setShowRestoreDialog] = useState(false);
+    const [selectedPayment, setSelectedPayment] = useState(null);
+    const [showScreenshot, setShowScreenshot] = useState(false);
+    const [currentScreenshot, setCurrentScreenshot] = useState(null);
+
+    // Dummy data for deleted payments
+    const dummyDeletedPayments = [
+      {
+        id: 1,
+        date: '2024-03-15',
+        amount: '2500',
+        screenshot_src: 'https://picsum.photos/200/300',
+      },
+      {
+        id: 2,
+        date: '2024-03-10',
+        amount: '3500',
+        screenshot_src: 'https://picsum.photos/200/300',
+      },
+      {
+        id: 3,
+        date: '2024-03-05',
+        amount: '4200',
+        screenshot_src: 'https://picsum.photos/200/300',
+      },
+      {
+        id: 4,
+        date: '2024-03-01',
+        amount: '1800',
+        screenshot_src: 'https://picsum.photos/200/300',
+      }
+    ];
+
+    const itemsPerPage = 4;
+    const startIndex = (deletedPaymentsPage - 1) * itemsPerPage;
+    const currentItems = dummyDeletedPayments.slice(startIndex, startIndex + itemsPerPage);
+
+    const handlePageChange = (direction) => {
+      if (direction === "prev" && deletedPaymentsPage > 1) {
+        setDeletedPaymentsPage(deletedPaymentsPage - 1);
+      } else if (
+        direction === "next" &&
+        deletedPaymentsPage < Math.ceil(dummyDeletedPayments.length / itemsPerPage)
+      ) {
+        setDeletedPaymentsPage(deletedPaymentsPage + 1);
+      }
+    };
+
+    const handleRestore = async (payment) => {
+      setSelectedPayment(payment);
+      setShowRestoreDialog(true);
+    };
+
+    const confirmRestore = async () => {
+      // Here you would implement the restore API call
+      console.log('Restoring payment:', selectedPayment.id);
+      setShowRestoreDialog(false);
+      setSelectedPayment(null);
+    };
+
+    const handleScreenshotClick = (src) => {
+      setCurrentScreenshot(src);
+      setShowScreenshot(true);
+    };
+
+    return (
+      <div className="overflow-y-auto min-h-[25em] mt-8 min-w-full flex flex-col w-[100%] md:col-span-2">
+        <h2 className="text-xl font-bold mb-4">Deleted Payment History</h2>
+        <table className="min-w-full bg-white shadow rounded">
+          <thead>
+            <tr className="bg-gray-300 text-left">
+              <th className="py-2 px-4">Date</th>
+              <th className="py-2 px-4">Amount</th>
+              <th className="py-2 px-4">Screenshot</th>
+              <th className="py-2 px-4">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentItems.map((payment) => (
+              <tr key={payment.id} className="border-b hover:bg-gray-50">
+                <td className="py-2 px-4">{payment.date}</td>
+                <td className="py-2 px-4">{payment.amount}</td>
+                <td className="py-2 px-4">
+                  <button
+                    onClick={() => handleScreenshotClick(payment.screenshot_src)}
+                    className="px-4 py-2 bg-white border-2 border-gray-300 rounded-md hover:bg-gray-200"
+                  >
+                    View Screenshot
+                  </button>
+                </td>
+                <td className="py-2 px-4">
+                  <button
+                    onClick={() => handleRestore(payment)}
+                    className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+                  >
+                    Restore
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* Pagination Controls */}
+        <div className="grid grid-cols-3 gap-3 md:grid-cols-4 w-full mx-auto p-4">
+          <button
+            onClick={() => handlePageChange("prev")}
+            disabled={deletedPaymentsPage === 1}
+            className="px-4 py-2 bg-gray-200 w-full md:w-fit rounded-md disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
+          >
+            <span className="w-full">Previous</span>
+          </button>
+          <span className="px-4 py-2 justify-self-center">
+            Page {deletedPaymentsPage}
+          </span>
+          <div className="justify-self-end md:col-span-2">
+            <button
+              onClick={() => handlePageChange("next")}
+              disabled={startIndex + itemsPerPage >= dummyDeletedPayments.length}
+              className="px-4 py-2 bg-gray-200 rounded-md w-full md:w-fit disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
+            >
+              <span className="w-full">Next</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Restore Confirmation Dialog */}
+        {showRestoreDialog && (
+          <div 
+            onClick={() => {
+              setShowRestoreDialog(false);
+              setSelectedPayment(null);
+            }} 
+            className="fixed inset-0 flex items-center justify-center bg-black/50 z-[110]"
+          >
+            <div 
+              onClick={(e) => e.stopPropagation()} 
+              className="bg-white p-4 rounded shadow-md"
+            >
+              <p>Are you sure you want to restore this payment?</p>
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  onClick={() => {
+                    setShowRestoreDialog(false);
+                    setSelectedPayment(null);
+                  }}
+                  className="px-4 py-2 bg-gray-300 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmRestore}
+                  className="px-4 py-2 bg-green-500 text-white rounded"
+                >
+                  Restore
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Screenshot Modal */}
+        {showScreenshot && (
+          <div 
+            onClick={() => {
+              setShowScreenshot(false);
+              setCurrentScreenshot(null);
+            }} 
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-[110]"
+          >
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowScreenshot(false);
+                setCurrentScreenshot(null);
+              }}
+              className="absolute top-4 right-4 text-white text-3xl font-bold z-50"
+            >
+              &times;
+            </button>
+            <img
+              src={currentScreenshot}
+              alt="Payment Screenshot"
+              className="max-w-full max-h-[80vh] rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1 md:p-4">
       <div className="flex justify-between flex-col 2xl:h-[20em] 2xl:flex-row md:row-span-3 py-2 gap-2 px-2 items-center bg-gray-100 rounded-xl">
@@ -495,8 +695,8 @@ const UserDetails = () => {
           <span>{userData.totalItemsSold}</span>
         </div>
       </div>
-
       <div className="overflow-x-auto md:col-span-2 xl:p-4">
+ <h2 className="text-xl font-bold mb-4">Payment Summary</h2>
         <table className="min-w-full rounded-2xl border-2 border-gray-300">
           <thead>
             <tr className="bg-gray-100">
@@ -509,11 +709,11 @@ const UserDetails = () => {
             {Array.isArray(currentItems) && currentItems.length > 0 ? (
               currentItems.map((item, index) => (
                 <tr key={index} className="border">
-                  <td className="px-4 lg:text-xl py-2 border">
+                  <td className="px-4 py-2 border">
                     {item.date?.split(" ")[0]}
                   </td>
-                  <td className="px-4 lg:text-xl py-2 border">{item.amount}</td>
-                  <td className="px-4 lg:text-xl py-2 border">
+                  <td className="px-4 py-2 border">{item.amount}</td>
+                  <td className="px-4 py-2 border">
                     <span className="flex justify-between items-center">
                       <button
                         onClick={() => handleOpenPopup(item.screenshot_src)}
@@ -567,7 +767,7 @@ const UserDetails = () => {
                   
                   className="px-4 py-2 bg-red-500 text-white rounded"
                 >
-    
+    <ToastContainer />
 
                   Confirm
                 </button>
@@ -592,13 +792,13 @@ const UserDetails = () => {
                 src={currentImage}
                 alt="Screenshot"
                 className="max-w-full max-h-[80vh] mx-auto"
-              />  
+              />
             </div>
           </div>
         )}
 
-        {/* Pagination Controls */}
-        <div className="grid grid-cols-3 gap-3 md:grid-cols-3 w-full mx-auto justify-center p-4">
+      {/* Pagination Controls */}
+        <div className="grid grid-cols-3 gap-3 md:grid-cols-4 w-full mx-auto justify-center p-4">
           <button
             onClick={() => handlePageChange("prev")}
             disabled={currentPage === 1}
@@ -610,7 +810,9 @@ const UserDetails = () => {
           <span className="px-4 lg:text-xl py-2 justify-self-center">
             Page {currentPage}
           </span>
-          <div className="justify-self-end flex flex-col md:flex-row gap-2">
+          <div className="justify-self-end md:col-span-2 flex flex-col md:flex-row gap-2">
+           
+
             <button
               onClick={() => handlePageChange("next")}
               disabled={startIndex + itemsPerPage >= Olddata?.length}
@@ -619,17 +821,33 @@ const UserDetails = () => {
               <span className="w-full lg:text-xl">Next</span>
               
             </button>
+
+            <button
+              onClick={() => setShowDeletedPayments(true)}
+              className="px-4 py-2 hidden md:block bg-gray-200 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
+            >
+              <span className="hidden md:inline lg:text-xl">Deleted Payments</span>
+              
+            </button>
+
             <button
               onClick={() => setShowModal(true)}
               className="px-4 py-2 hidden md:block bg-gray-200 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
             >
-              <span className="hidden md:inline lg:text-xl">Add To Table</span>
+              <span className="hidden md:inline">Add To Table</span>
               <span className="md:hidden">+ Add</span>
             </button>
           </div>
           <button
+              onClick={() => setShowDeletedPayments(true)}
+              className="px-4 py-2 bg-gray-200 md:hidden col-span-1 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
+            >
+              
+              <span className="md:hidden">Deleted</span>
+            </button>
+          <button
               onClick={() => setShowModal(true)}
-              className="px-4 py-2 bg-gray-200 md:hidden col-span-3 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
+              className="px-4 py-2 bg-gray-200 md:hidden col-span-2 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
             >
               <span className="hidden md:inline">Add To Table</span>
               <span className="md:hidden">+ Add</span>
@@ -671,27 +889,27 @@ const UserDetails = () => {
           >
             {/* Cross Button to Close Modal */}
             <button
-              className="absolute top-2 lg:text-2xl right-2 text-black cursor-pointer hover:text-gray-700"
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
               onClick={() => {
                 setShowModal(false);
                 reset();
               }}
             >
-              <ImCross />
+              ✖
             </button>
 
-            <h2 className="text-lg lg:text-xl font-semibold mb-4 text-center">
+            <h2 className="text-lg font-semibold mb-4 text-center">
               Upload Image, Amount & Date
             </h2>
 
-            <form className="lg:text-xl" onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               {/* Image Input */}
               <div className="mb-4">
                 <div className="flex flex-col md:flex-row justify-between">
                   <label className="block mb-1">Upload Image:</label>
                   <input
                     type="file"
-                    className="bg-gray-200  p-2 rounded-2xl cursor-pointer"
+                    className="bg-gray-200 p-2 rounded-2xl cursor-pointer"
                     accept=".jpg,.jpeg,.png"
                     {...register("image", {
                       required: "Image is required",
@@ -716,7 +934,7 @@ const UserDetails = () => {
                 <label className="block mb-1">Amount:</label>
                 <input
                   type="number"
-                  className="border no-spinner p-2 rounded w-full"
+                  className="border p-2 rounded w-full"
                   placeholder="Enter amount"
                   {...register("amount", {
                     required: "Amount is required",
@@ -783,6 +1001,28 @@ const UserDetails = () => {
           </div>
         </div>
       )}
+
+      {showDeletedPayments && (
+        <div
+          onClick={() => {
+            setShowDeletedPayments(false);
+          }}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white relative rounded-lg overflow-y-auto max-h-[30em] md:max-h-[45em] shadow-lg w-full h-full max-w-[69em] p-4"
+          >
+            <button
+              onClick={() => setShowDeletedPayments(false)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 z-10"
+            >
+              ✖
+            </button>
+            <DeletedPaymentsModal />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -824,9 +1064,10 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
     } catch (error) {
       console.log("error response", error);
     }
-    window.location.reload();
   
   }
+
+  
 
 
   return (
@@ -898,7 +1139,7 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
               <h3 className="font-semibold mb-2">Item Details:</h3>
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left lg:text-lg border-b">
+                  <tr className="text-left border-b">
                     <th className="py-1 px-2">Item Name</th>
                     <th className="py-1 px-2">Quantity</th>
                     <th className="py-1 px-2">Margin</th>
@@ -909,7 +1150,7 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
                   {Array.isArray(data.user_purchase_details) &&
                   data.user_purchase_details.length > 0 ? (
                     data.user_purchase_details.map((item, i) => (
-                      <tr key={i} className="border-b text-lg">
+                      <tr key={i} className="border-b">
                         <td className="py-1 px-2">{item.item_name}</td>
                         <td className="py-1 px-2">{item.item_quantity}</td>
                         <td className="py-1 px-2">{item.margin} Rs</td>
@@ -948,7 +1189,8 @@ const SalesTable = ({ items }) => {
     salesStartIndex + salesItemsPerPage,
   );
   const [showModal3, setShowModal3] = useState(false);
-  const [subItems, setSubItems] = useState([]); // State for dynamic sub-items
+  const [subItems, setSubItems] = useState([]);
+  const [showDeleted2, setShowDeleted2] = useState(false);
 
   const location = useLocation();
   const contact = location.state?.contact;
@@ -1028,73 +1270,120 @@ const SalesTable = ({ items }) => {
     reset(); // Reset form fields
   };
 
+const DeletedSales = () => {
+    console.log("hell is waiting")
+    setShowDeleted2(!showDeleted2);
+  }
+
+
   return (
-    <div className="overflow-y-auto min-h-[25em] mt-8 min-w-full flex flex-col w-[100%] md:col-span-2">
-      <h2 className="text-2xl font-bold mb-4">Sales Summary</h2>
-      <table className="min-w-full lg:text-xl bg-white shadow rounded">
-        <thead>
-          <tr className="bg-gray-300 text-left">
-            <th className="py-2 px-4">Date</th>
-            <th className="py-2 px-4">Status</th>
-            <th className="py-2 px-4">Bill</th>
-            <th className="py-2 px-4">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Array.isArray(salesCurrentItems) && salesCurrentItems.length > 0 ? (
-            salesCurrentItems.map((entry, index) => (
-              <CollapsibleTableRow
-                key={index}
-                data={entry}
-                index={index}
-                expandedIndex={expandedIndex}
-                onExpand={handleExpand}
-              />
-            ))
-          ) : (
-            <tr>
-              <td colSpan={3} className="text-center py-4 text-gray-500">
-                No sales records found.
-              </td>
+    <>
+      <div className="overflow-y-auto min-h-[25em] mt-8 min-w-full flex flex-col w-[100%] md:col-span-2">
+        <h2 className="text-xl font-bold mb-4">Sales Summary</h2>
+        <table className="min-w-full bg-white shadow rounded">
+          <thead>
+            <tr className="bg-gray-300 text-left">
+              <th className="py-2 px-4">Date</th>
+              <th className="py-2 px-4">Status</th>
+              <th className="py-2 px-4">Bill</th>
+              <th className="py-2 px-4">Amount</th>
             </tr>
-          )}
-        </tbody>
-      </table>
-      <div className="grid  grid-cols-3 gap-3 md:grid-cols-3 w-full lg:text-xl mx-auto p-4">
-        <button
-          onClick={() => handleSalesPageChange("prev")}
-          disabled={salesCurrentPage === 1}
-          className="px-4 py-2 bg-gray-200 w-full md:w-fit rounded-md disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
-        >
-          <span className="w-full">Previous</span>
-        </button>
-        <span className="px-4 py-2 justify-self-center">
-          Page {salesCurrentPage}
-        </span>
-        <div className="justify-self-end flex flex-col md:flex-row gap-2">
+          </thead>
+          <tbody>
+            {Array.isArray(salesCurrentItems) && salesCurrentItems.length > 0 ? (
+              salesCurrentItems.map((entry, index) => (
+                <CollapsibleTableRow
+                  key={index}
+                  data={entry}
+                  index={index}
+                  expandedIndex={expandedIndex}
+                  onExpand={handleExpand}
+                />
+              ))
+            ) : (
+              <tr>
+                <td colSpan={3} className="text-center py-4 text-gray-500">
+                  No sales records found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+        <div className="grid grid-cols-3 gap-3 md:grid-cols-4 w-full mx-auto p-4">
           <button
-            onClick={() => handleSalesPageChange("next")}
-            disabled={salesStartIndex + salesItemsPerPage >= items.length}
-            className="px-4 py-2 bg-gray-200 rounded-md w-full md:w-fit disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
+            onClick={() => handleSalesPageChange("prev")}
+            disabled={salesCurrentPage === 1}
+            className="px-4 py-2 bg-gray-200 w-full md:w-fit rounded-md disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
           >
-            <span className="w-full">Next</span>
+            <span className="w-full">Previous</span>
           </button>
+          <span className="px-4 py-2 justify-self-center">
+            Page {salesCurrentPage}
+          </span>
+          <div className="justify-self-end md:col-span-2 flex flex-col md:flex-row gap-2">
+            <button
+              onClick={() => handleSalesPageChange("next")}
+              disabled={salesStartIndex + salesItemsPerPage >= items.length}
+              className="px-4 py-2 bg-gray-200 rounded-md w-full md:w-fit disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
+            >
+              <span className="w-full">Next</span>
+            </button>
+            
+             <button
+                // onClick={() => setShowModal(true)}
+                onClick={DeletedSales}
+                className="px-4 py-2 hidden md:block bg-gray-200 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
+              >
+                <span className="hidden md:inline lg:text-xl">Deleted Table</span>
+                
+              </button>
+            <button
+              onClick={() => setShowModal3(true)}
+              className="px-4 py-2 hidden md:block bg-gray-200 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
+            >
+              <span className="hidden md:inline">Add to table</span>
+              <span className="md:hidden">+ Add</span>
+            </button>
+             
+          </div>
+           <button
+                onClick={() => setShowModal(true)}
+                className="px-4 py-2 bg-gray-200 md:hidden col-span-1 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
+              >
+                
+                <span className="md:hidden">Deleted</span>
+              </button>
           <button
-            onClick={() => setShowModal3(true)}
-            className="px-4 py-2 hidden md:block bg-gray-200 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
-          >
-            <span className="hidden md:inline">Add to table</span>
-            <span className="md:hidden">+ Add</span>
-          </button>
+              onClick={() => setShowModal3(true)}
+              className="px-4 py-2 bg-gray-200 md:hidden col-span-2 md:col-span-3 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
+            >
+              <span className="hidden md:inline">Add to table</span>
+              <span className="md:hidden">+ Add</span>
+            </button>
         </div>
-        <button
-          onClick={() => setShowModal3(true)}
-          className="px-4 py-2 bg-gray-200 md:hidden col-span-3 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
-        >
-          <span className="hidden md:inline">Add to table</span>
-          <span className="md:hidden">+ Add</span>
-        </button>
       </div>
+
+      {showDeleted2 && (
+        <div
+          onClick={() => {
+            setShowDeleted2(false);
+          }}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white relative rounded-lg overflow-y-auto max-h-[30em] md:max-h-[45em] shadow-lg w-full h-full max-w-[69em]"
+          >
+            <button
+              onClick={() => setShowDeleted2(false)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 z-10"
+            >
+              ✖
+            </button>
+            <DeletedSalesTable />
+          </div>
+        </div>
+      )}
 
       {showModal3 && (
         <div
@@ -1177,7 +1466,7 @@ const SalesTable = ({ items }) => {
                     )}
                   </div>
 
-                  <div className="my-4">
+                  <div className="mb-4">
                     <label className="block text-sm font-medium mb-1">
                       Amount
                     </label>
@@ -1284,7 +1573,7 @@ const SalesTable = ({ items }) => {
 
                     <div className="z-20">
 
-                    <label className="block text-sm font-medium my-2">
+                    <label className="block text-sm font-medium mb-1">
                      Margin
                     </label>
                     <input
@@ -1336,6 +1625,216 @@ const SalesTable = ({ items }) => {
           </div>
         </div>
       )}
+    </>
+  );
+};
+
+const DeletedSalesTable = () => {
+  // Dummy data for deleted sales
+  const dummyDeletedSales = [
+    {
+      id: 1,
+      date: '2024-03-15',
+      status: 0,
+      bill_number: 'DEL-001',
+      amount: '2500',
+      user_purchase_details: [
+        { item_name: 'Kurta Pajama', item_quantity: 2, margin: '200', item_total: '1800' },
+        { item_name: 'Silk Saree', item_quantity: 1, margin: '300', item_total: '700' }
+      ]
+    },
+    {
+      id: 2,
+      date: '2024-03-10',
+      status: 1,
+      bill_number: 'DEL-002',
+      amount: '3500',
+      user_purchase_details: [
+        { item_name: 'Sherwani Set', item_quantity: 1, margin: '500', item_total: '2500' },
+        { item_name: 'Salwar Suit', item_quantity: 2, margin: '250', item_total: '1000' }
+      ]
+    },
+    {
+      id: 3,
+      date: '2024-03-05',
+      status: 0,
+      bill_number: 'DEL-003',
+      amount: '4200',
+      user_purchase_details: [
+        { item_name: 'Lehenga Choli', item_quantity: 1, margin: '600', item_total: '3200' },
+        { item_name: 'Anarkali Dress', item_quantity: 2, margin: '200', item_total: '1000' }
+      ]
+    }
+  ];
+
+  const [deletedExpandedIndex, setDeletedExpandedIndex] = useState(null);
+  const [deletedCurrentPage, setDeletedCurrentPage] = useState(1);
+  const deletedItemsPerPage = 4;
+  const deletedStartIndex = (deletedCurrentPage - 1) * deletedItemsPerPage;
+  const deletedCurrentItems = dummyDeletedSales.slice(
+    deletedStartIndex,
+    deletedStartIndex + deletedItemsPerPage
+  );
+
+  const handleDeletedExpand = (index) => {
+    setDeletedExpandedIndex((prevIndex) => (prevIndex === index ? null : index));
+  };
+
+  const handleDeletedPageChange = (direction) => {
+    if (direction === "prev" && deletedCurrentPage > 1) {
+      setDeletedCurrentPage(deletedCurrentPage - 1);
+    } else if (
+      direction === "next" &&
+      deletedCurrentPage < Math.ceil(dummyDeletedSales.length / deletedItemsPerPage)
+    ) {
+      setDeletedCurrentPage(deletedCurrentPage + 1);
+    }
+  };
+
+  return (
+    <div className="overflow-y-auto min-h-[25em] mt-8 min-w-full flex flex-col w-[100%] md:col-span-2">
+      <h2 className="text-xl font-bold mb-4">Deleted Sales History</h2>
+      <table className="min-w-full bg-white shadow rounded">
+        <thead>
+          <tr className="bg-gray-300 text-left">
+            <th className="py-2 px-4">Date</th>
+            <th className="py-2 px-4">Status</th>
+            <th className="py-2 px-4">Bill</th>
+            <th className="py-2 px-4">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {deletedCurrentItems.map((entry, index) => (
+            <DeletedSalesRow
+              key={entry.id}
+              data={entry}
+              index={index}
+              expandedIndex={deletedExpandedIndex}
+              onExpand={handleDeletedExpand}
+            />
+          ))}
+        </tbody>
+      </table>
+      <div className="grid grid-cols-3 gap-3 md:grid-cols-4 w-full mx-auto p-4">
+        <button
+          onClick={() => handleDeletedPageChange("prev")}
+          disabled={deletedCurrentPage === 1}
+          className="px-4 py-2 bg-gray-200 w-full md:w-fit rounded-md disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
+        >
+          <span className="w-full">Previous</span>
+        </button>
+        <span className="px-4 py-2 justify-self-center">
+          Page {deletedCurrentPage}
+        </span>
+        <div className="justify-self-end md:col-span-2">
+          <button
+            onClick={() => handleDeletedPageChange("next")}
+            disabled={deletedStartIndex + deletedItemsPerPage >= dummyDeletedSales.length}
+            className="px-4 py-2 bg-gray-200 rounded-md w-full md:w-fit disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
+          >
+            <span className="w-full">Next</span>
+          </button>
+        </div>
+      </div>
     </div>
+  );
+};
+
+const DeletedSalesRow = ({ data, index, expandedIndex, onExpand }) => {
+  const isExpanded = index === expandedIndex;
+  const [showRestoreDialog, setShowRestoreDialog] = useState(false);
+
+  const handleRestore = async () => {
+    // Here you would implement the restore API call
+    console.log('Restoring item:', data.id);
+    setShowRestoreDialog(false);
+  };
+
+  return (
+    <>
+      <tr
+        className={`cursor-pointer border-b hover:bg-gray-100 ${
+          isExpanded ? "bg-gray-200" : "bg-white"
+        }`}
+        onClick={() => onExpand(index)}
+      >
+        <td className="py-2 px-4">{data.date}</td>
+        <td className="py-2 px-4">
+          {data.status === 1 ? "Paid" : "Not Paid"}
+        </td>
+        <td className="py-2 px-4">{data.bill_number}</td>
+        <td className="py-2 px-4 flex w-full items-center justify-between">
+          {data.amount}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowRestoreDialog(true);
+            }}
+            className="cursor-pointer hidden md:block rounded-sm p-2"
+            style={{ backgroundColor: "#4CAF50", color: "white" }}
+          >
+            Restore
+          </button>
+        </td>
+      </tr>
+
+      {showRestoreDialog && (
+        <div 
+          onClick={() => setShowRestoreDialog(false)} 
+          className="fixed inset-0 flex items-center justify-center bg-black/50"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()} 
+            className="bg-white p-4 rounded shadow-md"
+          >
+            <p>Are you sure you want to restore this item?</p>
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                onClick={() => setShowRestoreDialog(false)}
+                className="px-4 py-2 bg-gray-300 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleRestore}
+                className="px-4 py-2 bg-green-500 text-white rounded"
+              >
+                Restore
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isExpanded && (
+        <tr className="bg-gray-50">
+          <td colSpan={4} className="p-4">
+            <div>
+              <h3 className="font-semibold mb-2">Deleted Item Details:</h3>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left border-b">
+                    <th className="py-1 px-2">Item Name</th>
+                    <th className="py-1 px-2">Quantity</th>
+                    <th className="py-1 px-2">Margin</th>
+                    <th className="py-1 px-2">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.user_purchase_details.map((item, i) => (
+                    <tr key={i} className="border-b">
+                      <td className="py-1 px-2">{item.item_name}</td>
+                      <td className="py-1 px-2">{item.item_quantity}</td>
+                      <td className="py-1 px-2">{item.margin} Rs</td>
+                      <td className="py-1 px-2">{item.item_total} Rs</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </td>
+        </tr>
+      )}
+    </>
   );
 };

@@ -1,40 +1,85 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-const vendors = [
-  { id: 1, name: "vendorname", amount: "100" },
-  { id: 2, name: "vendorname1", amount: "200" },
-  { id: 3, name: "vendorname2", amount: "300" },
-  { id: 4, name: "vendorname3", amount: "400" },
-  { id: 5, name: "vendorname3", amount: "500" },
-  { id: 6, name: "vendorname3", amount: "600" },
-];
+import axios from "axios";
+
+
+
+
+
 
 const VendorTable = () => {
-  const [sentVendors, setSentVendors] = useState({});
+const [sentVendors, setSentVendors] = useState({});
 
-  const handleSend = (id) => {
-    setSentVendors((prev) => ({ ...prev, [id]: true }));
+const handleSend = (phone_number, id) => {
+  console.log("Send request to:", phone_number);
+
+  const fetchData = async () => {
+    const data = new FormData();
+    data.append("phone_number", phone_number); // ✅ Append phone_number to FormData
+
+    try {
+      const response = await axios.post(
+        "https://zivaworld.online/microservices/complete_payment_request.php",
+        data // ✅ Send the FormData object
+      );
+
+      if (response.status === 200) {
+        console.log("success response", response.data);
+        setSentVendors((prev) => ({ ...prev, [id]: true }));
+        window.location.reload(); // Reload the page to reflect changes
+      }
+    } catch (error) {
+      console.log("error response", error);
+    }
   };
 
+  fetchData();
+};
+
+const [vendors, setVendors] = useState([]);
+
+
+    useEffect(() => {
+    const fetchData = async () => {
+      const data = new FormData();
+      try {
+        const response = await axios.post(
+          "https://zivaworld.online/microservices/fetch_payment_request.php"
+        );
+        if (response.status == 200) {
+          console.log("success response", response.data);
+          setVendors(response.data);
+         
+        }
+      } catch (error) {
+        console.log("error response", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
-    <div className="overflow-x-auto p-4">
-      <table className="w-full border-collapse border border-gray-300 rounded-lg">
+    <div className="overflow-x-auto  p-4">
+      <table className="w-full  border-collapse border border-gray-300 rounded-lg">
         <thead>
-          <tr className="bg-gray-100">
-            <th className="border border-gray-300 px-4 py-2 text-left">Vendor Name</th>
-            <th className="border border-gray-300 px-4 py-2 text-left">Amount Requested</th>
-            <th className="border border-gray-300 px-4 py-2 text-center">Action</th>
+          <tr className="bg-gray-100 rounded-2xl">
+            <th className="px-4 py-2 text-center">Phone Number</th>
+            <th className="px-4 py-2 text-center">Amount Requested</th>
+            <th className="px-4 py-2 text-center">Action</th>
           </tr>
         </thead>
         <tbody>
           {vendors.map((vendor) => (
-            <tr key={vendor.id} className="border border-gray-300">
-              <Link to='/'  className="border border-gray-300 px-4 py-2 font-bold">{vendor.name}</Link>
-              <td className="border border-gray-300 px-4 py-2">{vendor.amount}</td>
-              <td className="border border-gray-300 px-4 py-2 text-center">
+            <tr key={vendor.id}>
+              <td className="px-4 py-2 text-center">
+                <Link to='/' className="font-bold block w-full">{vendor.phone_number}</Link>
+              </td>
+              <td className="px-4 py-2 text-center">{vendor.amount}</td>
+              <td className="px-4 py-2 text-center">
                 <button
                   className={`px-4 py-1 rounded-lg border border-gray-500 hover:bg-gray-200 ${sentVendors[vendor.id] ? "bg-green-500 text-white" : "bg-white"}`}
-                  onClick={() => handleSend(vendor.id)}
+                  onClick={() => handleSend(vendor.phone_number)}
                   disabled={sentVendors[vendor.id]}
                 >
                   {sentVendors[vendor.id] ? "Sent" : "Send?"}

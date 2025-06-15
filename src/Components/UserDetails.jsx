@@ -1,9 +1,4 @@
 import React from "react";
-<<<<<<< HEAD
- 
-=======
-
->>>>>>> f9a7003 (jksd)
 import { FaTshirt, FaMitten, FaSocks } from "react-icons/fa";
 import { GiTrousers } from "react-icons/gi";
 import { useState, useRef, useEffect } from "react";
@@ -34,10 +29,7 @@ const UserDetails = () => {
     totalSold: 0,
     totalMargin: 0,
     totalItemsSold: 0,
-<<<<<<< HEAD
-=======
     totalMarginEarned: 0,
->>>>>>> f9a7003 (jksd)
     image: "",
     QrImage: "",
   });
@@ -58,20 +50,10 @@ const UserDetails = () => {
     return <div>No contact data found.</div>;
   }
 
-<<<<<<< HEAD
-  
-=======
-
->>>>>>> f9a7003 (jksd)
   useEffect(() => {
     const fetchData = async () => {
       const data = new FormData();
       data.append("phone_number", contact.phone_number);
-<<<<<<< HEAD
-  
-=======
-
->>>>>>> f9a7003 (jksd)
       try {
         const response = await axios.post(
           "https://zivaworld.online/microservices/fetch_user.php",
@@ -82,17 +64,8 @@ const UserDetails = () => {
             },
           }
         );
-<<<<<<< HEAD
-  
         if (response.status === 200) {
           const res = response.data.data[0];
-  
-=======
-
-        if (response.status === 200) {
-          const res = response.data.data[0];
-
->>>>>>> f9a7003 (jksd)
           setUserData({
             address: res.address || "",
             businessName: res.business_name || "",
@@ -101,35 +74,20 @@ const UserDetails = () => {
             totalSold: res.totalSold || 0,
             totalMargin: res.totalMargin || 0,
             totalItemsSold: res.totalItemsSold || 0,
-<<<<<<< HEAD
-            image: res.front_image || "https://picsum.photos/200",
-            QrImage: res.qr_image,
-          });
-  
-=======
             totalMarginEarned: 0,
             image: res.front_image || "https://picsum.photos/200",
             QrImage: res.qr_image,
           });
 
->>>>>>> f9a7003 (jksd)
           console.log("Fetched useffffffr data:", res);
         }
       } catch (error) {
         console.log("Error fetching user data:", error);
       }
     };
-<<<<<<< HEAD
-  
-    fetchData();
-  }, []);
-  
-=======
-
     fetchData();
   }, []);
 
->>>>>>> f9a7003 (jksd)
 
   const [Olddata, setOlddata] = useState([]);
 
@@ -149,11 +107,7 @@ const UserDetails = () => {
         );
         if (response.status == 200) {
           console.log("success response", response.data);
-<<<<<<< HEAD
-          setOlddata(response.data.data);
-=======
           setOlddata(response.data.data.filter((item) => item.isDeleted === 0));
->>>>>>> f9a7003 (jksd)
         }
       } catch (error) {
         console.log("error response", error);
@@ -181,11 +135,7 @@ const UserDetails = () => {
 
         if (response.status === 200) {
           console.log("success response", response.data);
-<<<<<<< HEAD
-          setCurrentItem(response.data);
-=======
           setCurrentItem(response.data.filter((item) => item.isDeleted == 0));
->>>>>>> f9a7003 (jksd)
           // Do something with response.data
         }
       } catch (error) {
@@ -380,17 +330,9 @@ const UserDetails = () => {
       document.removeEventListener("mousedown", handleClickOutside2);
     };
   }, [showModal2]);
-<<<<<<< HEAD
-  
-    const [isQrOpen, setQrOpen] = useState(false);
-    const [isFrontOpen, setFrontOpen] = useState(false);
-    const [deleteId, setDeleteId] = useState(null);
-=======
-
   const [isQrOpen, setQrOpen] = useState(false);
   const [isFrontOpen, setFrontOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
->>>>>>> f9a7003 (jksd)
 
 
   const deleterow1 = async (index, id) => {
@@ -401,11 +343,7 @@ const UserDetails = () => {
 
   const confirmDelete1 = async () => {
     setShowDelete1(!showDelete1);
-<<<<<<< HEAD
-        const data = new FormData();
-=======
     const data = new FormData();
->>>>>>> f9a7003 (jksd)
     data.append("payment_id", deleteId);
 
     try {
@@ -437,35 +375,6 @@ const UserDetails = () => {
     const [showScreenshot, setShowScreenshot] = useState(false);
     const [currentScreenshot, setCurrentScreenshot] = useState(null);
 
-    // Dummy data for deleted payments
-<<<<<<< HEAD
-    const dummyDeletedPayments = [
-      {
-        id: 1,
-        date: '2024-03-15',
-        amount: '2500',
-        screenshot_src: 'https://picsum.photos/200/300',
-      },
-      {
-        id: 2,
-        date: '2024-03-10',
-        amount: '3500',
-        screenshot_src: 'https://picsum.photos/200/300',
-      },
-      {
-        id: 3,
-        date: '2024-03-05',
-        amount: '4200',
-        screenshot_src: 'https://picsum.photos/200/300',
-      },
-      {
-        id: 4,
-        date: '2024-03-01',
-        amount: '1800',
-        screenshot_src: 'https://picsum.photos/200/300',
-      }
-    ];
-=======
     const [dummyDeletedPayments, setDummyDeletedPayments] = useState([]);
 
     useEffect(() => {
@@ -494,7 +403,6 @@ const UserDetails = () => {
       fetchData();
     }, []);
 
->>>>>>> f9a7003 (jksd)
 
     const itemsPerPage = 4;
     const startIndex = (deletedPaymentsPage - 1) * itemsPerPage;
@@ -517,12 +425,6 @@ const UserDetails = () => {
     };
 
     const confirmRestore = async () => {
-<<<<<<< HEAD
-      // Here you would implement the restore API call
-      console.log('Restoring payment:', selectedPayment.id);
-      setShowRestoreDialog(false);
-      setSelectedPayment(null);
-=======
       setShowRestoreDialog(false);
       setSelectedPayment(null);
       const data = new FormData();
@@ -546,7 +448,6 @@ const UserDetails = () => {
       }
       window.location.reload();
 
->>>>>>> f9a7003 (jksd)
     };
 
     const handleScreenshotClick = (src) => {
@@ -617,7 +518,6 @@ const UserDetails = () => {
 
         {/* Restore Confirmation Dialog */}
         {showRestoreDialog && (
-<<<<<<< HEAD
           <div 
             onClick={() => {
               setShowRestoreDialog(false);
@@ -627,17 +527,6 @@ const UserDetails = () => {
           >
             <div 
               onClick={(e) => e.stopPropagation()} 
-=======
-          <div
-            onClick={() => {
-              setShowRestoreDialog(false);
-              setSelectedPayment(null);
-            }}
-            className="fixed inset-0 flex items-center justify-center bg-black/50 z-[110]"
-          >
-            <div
-              onClick={(e) => e.stopPropagation()}
->>>>>>> f9a7003 (jksd)
               className="bg-white p-4 rounded shadow-md"
             >
               <p>Are you sure you want to restore this payment?</p>
@@ -664,19 +553,11 @@ const UserDetails = () => {
 
         {/* Screenshot Modal */}
         {showScreenshot && (
-<<<<<<< HEAD
           <div 
             onClick={() => {
               setShowScreenshot(false);
               setCurrentScreenshot(null);
             }} 
-=======
-          <div
-            onClick={() => {
-              setShowScreenshot(false);
-              setCurrentScreenshot(null);
-            }}
->>>>>>> f9a7003 (jksd)
             className="fixed inset-0 bg-black/80 flex items-center justify-center z-[110]"
           >
             <button
@@ -734,11 +615,7 @@ const UserDetails = () => {
         )}
         <img
           src={userData.QrImage}
-<<<<<<< HEAD
            onClick={() => setQrOpen(true)}
-=======
-          onClick={() => setQrOpen(true)}
->>>>>>> f9a7003 (jksd)
           alt="User Photo"
           className="w-full md:min-w-[20em] max-h-[20em] xl:w-1/2 h-full xl:min-w-[17em] object-cover rounded-xl"
         />
@@ -764,11 +641,6 @@ const UserDetails = () => {
             />
           </div>
         )}
-<<<<<<< HEAD
-        
-=======
-
->>>>>>> f9a7003 (jksd)
       </div>
 
       <div className="bg-gray-100 p-4 rounded-xl text-lg md:text-2xl flex flex-col justify-between">
@@ -798,7 +670,6 @@ const UserDetails = () => {
         </div>
       </div>
 
-<<<<<<< HEAD
       <div className="bg-gray-100 p-4 rounded-xl text-lg md:text-2xl">
         <h2 className="font-bold mb-2">Most Sold Clothes</h2>
         {clothesData.map((item, index, comp) => (
@@ -817,26 +688,6 @@ const UserDetails = () => {
           </div>
         ))}
       </div>
-=======
-      {/* <div className="bg-gray-100 p-4 rounded-xl text-lg md:text-2xl"> */}
-      {/*   <h2 className="font-bold mb-2">Most Sold Clothes</h2> */}
-      {/*   {clothesData.map((item, index, comp) => ( */}
-      {/*     <div */}
-      {/*       key={index} */}
-      {/*       onClick={() => { */}
-      {/*         setShowModal2(true); */}
-      {/*         setIndexing(index); */}
-      {/*       }} */}
-      {/*       className="flex justify-between mb-2 cursor-pointer" */}
-      {/*     > */}
-      {/*       <div className="flex items-center"> */}
-      {/*         <span>{item.name}</span> */}
-      {/*       </div> */}
-      {/*       <span>{item.sold}</span> */}
-      {/*     </div> */}
-      {/*   ))} */}
-      {/* </div> */}
->>>>>>> f9a7003 (jksd)
 
       <div className="bg-gray-100 p-4 rounded-xl text-lg md:text-2xl flex flex-col justify-between">
         <div className="flex justify-between">
@@ -859,11 +710,7 @@ const UserDetails = () => {
         </div>
       </div>
       <div className="overflow-x-auto md:col-span-2 xl:p-4">
-<<<<<<< HEAD
  <h2 className="text-xl font-bold mb-4">Payment Summary</h2>
-=======
-        <h2 className="text-xl font-bold mb-4">Payment Summary</h2>
->>>>>>> f9a7003 (jksd)
         <table className="min-w-full rounded-2xl border-2 border-gray-300">
           <thead>
             <tr className="bg-gray-100">
@@ -917,11 +764,7 @@ const UserDetails = () => {
             setShowDelete1(false);
             setDeleteIndex1(null);
           }} className="fixed inset-0 flex items-center justify-center bg-black/50">
-<<<<<<< HEAD
             <div onClick={(e) => {e.stopPropagation()}} className="bg-white p-4 rounded shadow-md">
-=======
-            <div onClick={(e) => { e.stopPropagation() }} className="bg-white p-4 rounded shadow-md">
->>>>>>> f9a7003 (jksd)
               <p>Are you sure you want to delete this item?</p>
               <div className="flex justify-end gap-2 mt-4">
                 <button
@@ -935,18 +778,10 @@ const UserDetails = () => {
                 </button>
                 <button
                   onClick={confirmDelete1}
-<<<<<<< HEAD
                   
                   className="px-4 py-2 bg-red-500 text-white rounded"
                 >
     <ToastContainer />
-=======
-
-                  className="px-4 py-2 bg-red-500 text-white rounded"
-                >
-                  <ToastContainer />
->>>>>>> f9a7003 (jksd)
-
                   Confirm
                 </button>
               </div>
@@ -975,11 +810,6 @@ const UserDetails = () => {
           </div>
         )}
 
-<<<<<<< HEAD
-      {/* Pagination Controls */}
-=======
-        {/* Pagination Controls */}
->>>>>>> f9a7003 (jksd)
         <div className="grid grid-cols-3 gap-3 md:grid-cols-4 w-full mx-auto justify-center p-4">
           <button
             onClick={() => handlePageChange("prev")}
@@ -987,33 +817,18 @@ const UserDetails = () => {
             className="px-4 py-2 bg-gray-200 w-full md:w-fit rounded-md disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
           >
             <span className="w-full lg:text-xl">Previous</span>
-<<<<<<< HEAD
-            
-=======
-
->>>>>>> f9a7003 (jksd)
           </button>
           <span className="px-4 lg:text-xl py-2 justify-self-center">
             Page {currentPage}
           </span>
           <div className="justify-self-end md:col-span-2 flex flex-col md:flex-row gap-2">
-<<<<<<< HEAD
-           
-=======
-
->>>>>>> f9a7003 (jksd)
-
             <button
               onClick={() => handlePageChange("next")}
               disabled={startIndex + itemsPerPage >= Olddata?.length}
               className="px-4 py-2 bg-gray-200 rounded-md w-full md:w-fit disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
             >
               <span className="w-full lg:text-xl">Next</span>
-<<<<<<< HEAD
-              
-=======
 
->>>>>>> f9a7003 (jksd)
             </button>
 
             <button
@@ -1021,11 +836,7 @@ const UserDetails = () => {
               className="px-4 py-2 hidden md:block bg-gray-200 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
             >
               <span className="hidden md:inline lg:text-xl">Deleted Payments</span>
-<<<<<<< HEAD
-              
-=======
 
->>>>>>> f9a7003 (jksd)
             </button>
 
             <button
@@ -1037,7 +848,6 @@ const UserDetails = () => {
             </button>
           </div>
           <button
-<<<<<<< HEAD
               onClick={() => setShowDeletedPayments(true)}
               className="px-4 py-2 bg-gray-200 md:hidden col-span-1 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
             >
@@ -1051,21 +861,6 @@ const UserDetails = () => {
               <span className="hidden md:inline">Add To Table</span>
               <span className="md:hidden">+ Add</span>
             </button>
-=======
-            onClick={() => setShowDeletedPayments(true)}
-            className="px-4 py-2 bg-gray-200 md:hidden col-span-1 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
-          >
-
-            <span className="md:hidden">Deleted</span>
-          </button>
-          <button
-            onClick={() => setShowModal(true)}
-            className="px-4 py-2 bg-gray-200 md:hidden col-span-2 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
-          >
-            <span className="hidden md:inline">Add To Table</span>
-            <span className="md:hidden">+ Add</span>
-          </button>
->>>>>>> f9a7003 (jksd)
         </div>
       </div>
 
@@ -1194,11 +989,8 @@ const UserDetails = () => {
                 <button
                   type="button"
                   className="px-4 py-2 rounded-md"
-<<<<<<< HEAD
                   style={{backgroundColor:"#e5e7eb", border:"none",color:"black"}}                  
-=======
-                  style={{ backgroundColor: "#e5e7eb", border: "none", color: "black" }}
->>>>>>> f9a7003 (jksd)
+
                   onClick={() => {
                     setShowModal(false);
                     reset();
@@ -1209,13 +1001,9 @@ const UserDetails = () => {
                 <button
                   type="submit"
                   className="px-4 py-2 rounded-md"
-<<<<<<< HEAD
                   style={{backgroundColor:"#2b7fff", border:"none",color:"white"}}
                   
-=======
-                  style={{ backgroundColor: "#2b7fff", border: "none", color: "white" }}
 
->>>>>>> f9a7003 (jksd)
                 >
                   Submit
                 </button>
@@ -1260,7 +1048,6 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
 
   const [deleteIndex, setDeleteIndex] = useState(null);
 
-<<<<<<< HEAD
   const deleterow2 =(index)=>{
    setShowDelete2(!showDelete2)
    setDeleteIndex(index)
@@ -1268,15 +1055,7 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
   }
 
   const confirmDelete2 =(id) =>{
-=======
-  const deleterow2 = (index) => {
-    setShowDelete2(!showDelete2)
-    setDeleteIndex(index)
-    setDeleteId(data.id)
-  }
 
-  const confirmDelete2 = (id) => {
->>>>>>> f9a7003 (jksd)
     setShowDelete2(!showDelete2)
 
     const data = new FormData();
@@ -1297,36 +1076,24 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
     } catch (error) {
       console.log("error response", error);
     }
-<<<<<<< HEAD
   
+  window.location.reload();
   }
 
   
-=======
-    window.location.reload();
-  }
 
-
->>>>>>> f9a7003 (jksd)
 
 
   return (
     <>
       <tr
-<<<<<<< HEAD
         className={`cursor-pointer border-b hover:bg-gray-100 ${
           isExpanded ? "bg-gray-200" : "bg-white"
         }`}
         onClick={() => onExpand(index)}
       >
               <td className="py-2 px-4">{data.date?.split(" ")[0]}</td>
-=======
-        className={`cursor-pointer border-b hover:bg-gray-100 ${isExpanded ? "bg-gray-200" : "bg-white"
-          }`}
-        onClick={() => onExpand(index)}
-      >
-        <td className="py-2 px-4">{data.date?.split(" ")[0]}</td>
->>>>>>> f9a7003 (jksd)
+
         <td className="py-2 px-4">
           {data.status === 1 ? "Paid" : "Not Paid"}
         </td>
@@ -1336,19 +1103,12 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
         <td className="py-2 px-4 flex w-full items-center justify-between">
           {data.amount}
           <button
-<<<<<<< HEAD
             onClick={(e , index) => {
             
               deleterow2(index, data.id);
               e.stopPropagation();
               
-=======
-            onClick={(e, index) => {
 
-              deleterow2(index, data.id);
-              e.stopPropagation();
-
->>>>>>> f9a7003 (jksd)
             }}
             className="cursor-pointer hidden md:block  rounded-sm p-2"
             style={{ backgroundColor: "red", color: "white" }}
@@ -1357,7 +1117,6 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
           </button>
         </td>
 
-<<<<<<< HEAD
        
 
         {showDelete2 && (
@@ -1388,38 +1147,6 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
   </div>
 )}
         
-=======
-
-
-        {showDelete2 && (
-          <div o onClick={() => {
-            setShowDelete2(false);
-            setDeleteIndex(null);
-          }} className="fixed inset-0 flex items-center justify-center bg-black/50">
-            <div onClick={(e) => { e.stopPropagation() }} className="bg-white p-4 rounded shadow-md">
-              <p>Are you sure you want to delete this item?</p>
-              <div className="flex justify-end gap-2 mt-4">
-                <button
-                  onClick={() => {
-                    setShowDelete2(false);
-                    setDeleteIndex(null);
-                  }}
-                  className="px-4 py-2 bg-gray-300 rounded"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmDelete2}
-                  className="px-4 py-2 bg-red-500 text-white rounded"
-                >
-                  Confirm
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
->>>>>>> f9a7003 (jksd)
       </tr>
       {isExpanded && (
         <tr className="bg-gray-50">
@@ -1437,11 +1164,8 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
                 </thead>
                 <tbody>
                   {Array.isArray(data.user_purchase_details) &&
-<<<<<<< HEAD
                   data.user_purchase_details.length > 0 ? (
-=======
-                    data.user_purchase_details.length > 0 ? (
->>>>>>> f9a7003 (jksd)
+
                     data.user_purchase_details.map((item, i) => (
                       <tr key={i} className="border-b">
                         <td className="py-1 px-2">{item.item_name}</td>
@@ -1465,11 +1189,6 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
             </div>
           </td>
         </tr>
-<<<<<<< HEAD
-        
-=======
-
->>>>>>> f9a7003 (jksd)
       )}
 
     </>
@@ -1567,11 +1286,8 @@ const SalesTable = ({ items }) => {
     reset(); // Reset form fields
   };
 
-<<<<<<< HEAD
 const DeletedSales = () => {
-=======
-  const DeletedSales = () => {
->>>>>>> f9a7003 (jksd)
+
     console.log("hell is waiting")
     setShowDeleted2(!showDeleted2);
   }
@@ -1629,7 +1345,6 @@ const DeletedSales = () => {
             >
               <span className="w-full">Next</span>
             </button>
-<<<<<<< HEAD
             
              <button
                 // onClick={() => setShowModal(true)}
@@ -1639,17 +1354,7 @@ const DeletedSales = () => {
                 <span className="hidden md:inline lg:text-xl">Deleted Table</span>
                 
               </button>
-=======
 
-            <button
-              // onClick={() => setShowModal(true)}
-              onClick={DeletedSales}
-              className="px-4 py-2 hidden md:block bg-gray-200 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
-            >
-              <span className="hidden md:inline lg:text-xl">Deleted Table</span>
-
-            </button>
->>>>>>> f9a7003 (jksd)
             <button
               onClick={() => setShowModal3(true)}
               className="px-4 py-2 hidden md:block bg-gray-200 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
@@ -1657,7 +1362,6 @@ const DeletedSales = () => {
               <span className="hidden md:inline">Add to table</span>
               <span className="md:hidden">+ Add</span>
             </button>
-<<<<<<< HEAD
              
           </div>
            <button
@@ -1674,24 +1378,7 @@ const DeletedSales = () => {
               <span className="hidden md:inline">Add to table</span>
               <span className="md:hidden">+ Add</span>
             </button>
-=======
 
-          </div>
-          <button
-            onClick={() => setShowModal(true)}
-            className="px-4 py-2 bg-gray-200 md:hidden col-span-1 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
-          >
-
-            <span className="md:hidden">Deleted</span>
-          </button>
-          <button
-            onClick={() => setShowModal3(true)}
-            className="px-4 py-2 bg-gray-200 md:hidden col-span-2 md:col-span-3 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
-          >
-            <span className="hidden md:inline">Add to table</span>
-            <span className="md:hidden">+ Add</span>
-          </button>
->>>>>>> f9a7003 (jksd)
         </div>
       </div>
 
@@ -1712,12 +1399,8 @@ const DeletedSales = () => {
             >
               ✖
             </button>
-<<<<<<< HEAD
-            <DeletedSalesTable />
-=======
 
             <DeletedSalesTable contact={contact} />
->>>>>>> f9a7003 (jksd)
           </div>
         </div>
       )}
@@ -1841,8 +1524,6 @@ const DeletedSales = () => {
                     </div>
 
                     <label className="block text-sm font-medium mb-1">
-<<<<<<< HEAD
-  Item Name
 </label>
 <select
   required
@@ -1850,45 +1531,6 @@ const DeletedSales = () => {
   onChange={(e) =>
     handleSubItemChange(index, "name", e.target.value)
   }
-  className="w-full p-2 border rounded mb-2"
->
-  <option value="">Select Item</option>
-  {[
-    "Kurta Pajama",
-    "Silk Saree",
-    "Nehru Jacket",
-    "Lehenga Choli",
-    "Sherwani Set",
-    "Salwar Suit",
-    "Dhoti Kurta",
-    "Cotton Kurti",
-    "Ethnic Wear",
-    "Pathani Suit",
-    "Anarkali Dress",
-    "Kurta Set",
-    "Gown Dress",
-    "Banarasi Saree",
-    "Chanderi Suit",
-    "Linen Kurta",
-    "Denim Kurti",
-    "Zari Saree",
-    "Pattu Pavadai",
-    "Angrakha Kurta",
-  ].map((name, i) => (
-    <option key={i} value={name}>
-      {name}
-    </option>
-  ))}
-</select>
-=======
-                      Item Name
-                    </label>
-                    <select
-                      required
-                      value={item.name}
-                      onChange={(e) =>
-                        handleSubItemChange(index, "name", e.target.value)
-                      }
                       className="w-full p-2 border rounded mb-2"
                     >
                       <option value="">Select Item</option>
@@ -1914,13 +1556,11 @@ const DeletedSales = () => {
                         "Pattu Pavadai",
                         "Angrakha Kurta",
                       ].map((name, i) => (
-                        <option key={i} value={name}>
-                          {name}
-                        </option>
-                      ))}
+                          <option key={i} value={name}>
+                            {name}
+                          </option>
+                        ))}
                     </select>
->>>>>>> f9a7003 (jksd)
-
 
                     <label className="block text-sm font-medium mb-1">
                       Quantity
@@ -1951,25 +1591,6 @@ const DeletedSales = () => {
 
                     <div className="z-20">
 
-<<<<<<< HEAD
-                    <label className="block text-sm font-medium mb-1">
-                     Margin
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Enter margin"
-                      onChange={(e) =>
-                        handleSubItemChange(index, "margin", e.target.value)
-                      }
-                      className="w-full p-2 border rounded"
-                    />
-                    {errors.margin && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.bill_no.margin}
-                      </p>
-                    )}
-                  </div>
-=======
                       <label className="block text-sm font-medium mb-1">
                         Margin
                       </label>
@@ -1987,7 +1608,6 @@ const DeletedSales = () => {
                         </p>
                       )}
                     </div>
->>>>>>> f9a7003 (jksd)
                   </div>
                 ))}
               </div>
@@ -1996,11 +1616,7 @@ const DeletedSales = () => {
                   type="button"
                   onClick={addSubItem}
                   className="mb-4 px-4 py-2 h-fit b  rounded"
-<<<<<<< HEAD
-                  style={{backgroundColor:"#00c950", border:"none",color:"white"}}
-=======
                   style={{ backgroundColor: "#00c950", border: "none", color: "white" }}
->>>>>>> f9a7003 (jksd)
                 >
                   + Add Item
                 </button>
@@ -2018,11 +1634,7 @@ const DeletedSales = () => {
                 <button
                   type="submit"
                   className="px-4 py-2 h-fit  text-white rounded-md"
-<<<<<<< HEAD
-                  style={{backgroundColor:"#2b7fff", border:"none",color:"white"}}
-=======
                   style={{ backgroundColor: "#2b7fff", border: "none", color: "white" }}
->>>>>>> f9a7003 (jksd)
                 >
                   Submit
                 </button>
@@ -2035,49 +1647,9 @@ const DeletedSales = () => {
   );
 };
 
-<<<<<<< HEAD
-const DeletedSalesTable = () => {
-  // Dummy data for deleted sales
-  const dummyDeletedSales = [
-    {
-      id: 1,
-      date: '2024-03-15',
-      status: 0,
-      bill_number: 'DEL-001',
-      amount: '2500',
-      user_purchase_details: [
-        { item_name: 'Kurta Pajama', item_quantity: 2, margin: '200', item_total: '1800' },
-        { item_name: 'Silk Saree', item_quantity: 1, margin: '300', item_total: '700' }
-      ]
-    },
-    {
-      id: 2,
-      date: '2024-03-10',
-      status: 1,
-      bill_number: 'DEL-002',
-      amount: '3500',
-      user_purchase_details: [
-        { item_name: 'Sherwani Set', item_quantity: 1, margin: '500', item_total: '2500' },
-        { item_name: 'Salwar Suit', item_quantity: 2, margin: '250', item_total: '1000' }
-      ]
-    },
-    {
-      id: 3,
-      date: '2024-03-05',
-      status: 0,
-      bill_number: 'DEL-003',
-      amount: '4200',
-      user_purchase_details: [
-        { item_name: 'Lehenga Choli', item_quantity: 1, margin: '600', item_total: '3200' },
-        { item_name: 'Anarkali Dress', item_quantity: 2, margin: '200', item_total: '1000' }
-      ]
-    }
-  ];
-=======
 const DeletedSalesTable = ({ contact }) => {
   // Dummy data for deleted sales
   const [dummyDeletedSales, setDeletedDummySales] = useState([]);
->>>>>>> f9a7003 (jksd)
 
   const [deletedExpandedIndex, setDeletedExpandedIndex] = useState(null);
   const [deletedCurrentPage, setDeletedCurrentPage] = useState(1);
@@ -2088,8 +1660,6 @@ const DeletedSalesTable = ({ contact }) => {
     deletedStartIndex + deletedItemsPerPage
   );
 
-<<<<<<< HEAD
-=======
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -2119,7 +1689,6 @@ const DeletedSalesTable = ({ contact }) => {
     fetchData();
   }, []);
 
->>>>>>> f9a7003 (jksd)
   const handleDeletedExpand = (index) => {
     setDeletedExpandedIndex((prevIndex) => (prevIndex === index ? null : index));
   };
@@ -2190,10 +1759,6 @@ const DeletedSalesRow = ({ data, index, expandedIndex, onExpand }) => {
 
   const handleRestore = async () => {
     // Here you would implement the restore API call
-<<<<<<< HEAD
-    console.log('Restoring item:', data.id);
-    setShowRestoreDialog(false);
-=======
     setShowRestoreDialog(false);
     const sendingData = new FormData();
     sendingData.append("purchase_id", data.id);
@@ -2216,20 +1781,13 @@ const DeletedSalesRow = ({ data, index, expandedIndex, onExpand }) => {
       console.log("error response", error);
     }
     window.location.reload();
->>>>>>> f9a7003 (jksd)
   };
 
   return (
     <>
       <tr
-<<<<<<< HEAD
-        className={`cursor-pointer border-b hover:bg-gray-100 ${
-          isExpanded ? "bg-gray-200" : "bg-white"
-        }`}
-=======
         className={`cursor-pointer border-b hover:bg-gray-100 ${isExpanded ? "bg-gray-200" : "bg-white"
           }`}
->>>>>>> f9a7003 (jksd)
         onClick={() => onExpand(index)}
       >
         <td className="py-2 px-4">{data.date}</td>
@@ -2253,21 +1811,12 @@ const DeletedSalesRow = ({ data, index, expandedIndex, onExpand }) => {
       </tr>
 
       {showRestoreDialog && (
-<<<<<<< HEAD
-        <div 
-          onClick={() => setShowRestoreDialog(false)} 
-          className="fixed inset-0 flex items-center justify-center bg-black/50"
-        >
-          <div 
-            onClick={(e) => e.stopPropagation()} 
-=======
         <div
           onClick={() => setShowRestoreDialog(false)}
           className="fixed inset-0 flex items-center justify-center bg-black/50"
         >
           <div
             onClick={(e) => e.stopPropagation()}
->>>>>>> f9a7003 (jksd)
             className="bg-white p-4 rounded shadow-md"
           >
             <p>Are you sure you want to restore this item?</p>
@@ -2320,8 +1869,5 @@ const DeletedSalesRow = ({ data, index, expandedIndex, onExpand }) => {
       )}
     </>
   );
-<<<<<<< HEAD
+
 };
-=======
-};
->>>>>>> f9a7003 (jksd)

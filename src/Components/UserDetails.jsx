@@ -71,10 +71,6 @@ const UserDetails = () => {
             businessName: res.business_name || "",
             mobileNo: res.phone_number || "",
             joiningDate: res.joining_date || "",
-            totalSold: res.totalSold || 0,
-            totalMargin: res.totalMargin || 0,
-            totalItemsSold: res.totalItemsSold || 0,
-            totalMarginEarned: 0,
             image: res.front_image || "https://picsum.photos/200",
             QrImage: res.qr_image,
           });
@@ -116,6 +112,64 @@ const UserDetails = () => {
 
     fetchData();
   }, []);
+
+useEffect(() => {
+  const fetchData = async () => {
+    const data = new FormData();
+    data.append("phone_number", contact.phone_number);
+
+    try {
+      const response = await axios.post(
+        "https://zivaworld.online/microservices/user_stats.php",
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        const resData = response.data;
+
+        // Total margin earned
+        let totalMarginEarned = 0;
+          let totalItemsSold = 0;
+        if (Array.isArray(resData.user_purchases)) {
+          resData.user_purchases.forEach(purchase => {
+            if (Array.isArray(purchase.user_purchase_details)) {
+              purchase.user_purchase_details.forEach(detail => {
+                totalMarginEarned += Number(detail.margin || 0);
+                totalItemsSold += Number(detail.item_quantity || 0);
+              });
+            }
+          });
+        }
+
+        // Total margin paid
+        let totalMarginPaid = 0;
+        if (Array.isArray(resData.payment_history)) {
+          resData.payment_history.forEach(payment => {
+            totalMarginPaid += Number(payment.amount || 0);
+          });
+        }
+          let totalMarginRemaining = totalMarginEarned - totalMarginPaid;
+        setUserData(prev => ({
+          ...prev,
+          totalMarginEarned,
+          totalMargin: totalMarginRemaining,
+          totalItemsSold,
+        }));
+
+      }
+    } catch (error) {
+      console.log("❌ Error fetching user stats:", error);
+    }
+  };
+
+  fetchData();
+}, []);
+
 
   useEffect(() => {
     const fetchData = async () => {

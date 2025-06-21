@@ -1,4 +1,5 @@
 import React from "react";
+
 import { FaTshirt, FaMitten, FaSocks } from "react-icons/fa";
 import { GiTrousers } from "react-icons/gi";
 import { useState, useRef, useEffect } from "react";
@@ -14,6 +15,46 @@ import { ImCross } from "react-icons/im";
 import { Trash } from "lucide-react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+const clothingItems = {
+  "KIDS BOYS": [
+    "T-Shirt",
+    "Track pants",
+    "Jeans",
+    "Shirt",
+    "Raincoat",
+    "Undergarments",
+    "Ethnic Wear",
+  ],
+  "KIDS GIRLS": [
+    "T-Shirt",
+    "Track pants",
+    "Jeans",
+    "Top",
+    "Raincoat",
+    "Undergarments",
+    "Ethnic Wear",
+  ],
+  "MEN": [
+    "Jeans",
+    "Shirt",
+    "T-Shirt",
+    "Track pants",
+    "Undergarments",
+    "Ethnic Wear",
+    "Raincoat",
+  ],
+  "LADIES": [
+    "Jeans",
+    "Top",
+    "Leggings",
+    "Kurti",
+    "Saree",
+    "Raincoat",
+    "Ethnic Wear",
+    "Nighty",
+  ],
+};
 
 const UserDetails = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -50,10 +91,12 @@ const UserDetails = () => {
     return <div>No contact data found.</div>;
   }
 
+
   useEffect(() => {
     const fetchData = async () => {
       const data = new FormData();
       data.append("phone_number", contact.phone_number);
+
       try {
         const response = await axios.post(
           "https://zivaworld.online/microservices/fetch_user.php",
@@ -64,13 +107,19 @@ const UserDetails = () => {
             },
           }
         );
+
         if (response.status === 200) {
           const res = response.data.data[0];
+
           setUserData({
             address: res.address || "",
             businessName: res.business_name || "",
             mobileNo: res.phone_number || "",
             joiningDate: res.joining_date || "",
+            totalSold: res.totalSold || 0,
+            totalMargin: res.totalMargin || 0,
+            totalItemsSold: res.totalItemsSold || 0,
+            totalMarginEarned: 0,
             image: res.front_image || "https://picsum.photos/200",
             QrImage: res.qr_image,
           });
@@ -81,6 +130,7 @@ const UserDetails = () => {
         console.log("Error fetching user data:", error);
       }
     };
+
     fetchData();
   }, []);
 
@@ -112,64 +162,6 @@ const UserDetails = () => {
 
     fetchData();
   }, []);
-
-useEffect(() => {
-  const fetchData = async () => {
-    const data = new FormData();
-    data.append("phone_number", contact.phone_number);
-
-    try {
-      const response = await axios.post(
-        "https://zivaworld.online/microservices/user_stats.php",
-        data,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        const resData = response.data;
-
-        // Total margin earned
-        let totalMarginEarned = 0;
-          let totalItemsSold = 0;
-        if (Array.isArray(resData.user_purchases)) {
-          resData.user_purchases.forEach(purchase => {
-            if (Array.isArray(purchase.user_purchase_details)) {
-              purchase.user_purchase_details.forEach(detail => {
-                totalMarginEarned += Number(detail.margin || 0);
-                totalItemsSold += Number(detail.item_quantity || 0);
-              });
-            }
-          });
-        }
-
-        // Total margin paid
-        let totalMarginPaid = 0;
-        if (Array.isArray(resData.payment_history)) {
-          resData.payment_history.forEach(payment => {
-            totalMarginPaid += Number(payment.amount || 0);
-          });
-        }
-          let totalMarginRemaining = totalMarginEarned - totalMarginPaid;
-        setUserData(prev => ({
-          ...prev,
-          totalMarginEarned,
-          totalMargin: totalMarginRemaining,
-          totalItemsSold,
-        }));
-
-      }
-    } catch (error) {
-      console.log("❌ Error fetching user stats:", error);
-    }
-  };
-
-  fetchData();
-}, []);
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -384,6 +376,7 @@ useEffect(() => {
       document.removeEventListener("mousedown", handleClickOutside2);
     };
   }, [showModal2]);
+
   const [isQrOpen, setQrOpen] = useState(false);
   const [isFrontOpen, setFrontOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -429,6 +422,7 @@ useEffect(() => {
     const [showScreenshot, setShowScreenshot] = useState(false);
     const [currentScreenshot, setCurrentScreenshot] = useState(null);
 
+    // Dummy data for deleted payments
     const [dummyDeletedPayments, setDummyDeletedPayments] = useState([]);
 
     useEffect(() => {
@@ -524,7 +518,7 @@ useEffect(() => {
           <tbody>
             {currentItems.map((payment) => (
               <tr key={payment.id} className="border-b hover:bg-gray-50">
-                <td className="py-2 px-4">{payment.date}</td>
+                <td className="py-2 px-4">{payment.date?.slice(0, 10)}</td>
                 <td className="py-2 px-4">{payment.amount}</td>
                 <td className="py-2 px-4">
                   <button
@@ -537,7 +531,8 @@ useEffect(() => {
                 <td className="py-2 px-4">
                   <button
                     onClick={() => handleRestore(payment)}
-                    className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+                    className="px-4 py-2 text-white rounded-md"
+                    style={{ backgroundColor: "#00c951" }}
                   >
                     Restore
                   </button>
@@ -572,15 +567,15 @@ useEffect(() => {
 
         {/* Restore Confirmation Dialog */}
         {showRestoreDialog && (
-          <div 
+          <div
             onClick={() => {
               setShowRestoreDialog(false);
               setSelectedPayment(null);
-            }} 
+            }}
             className="fixed inset-0 flex items-center justify-center bg-black/50 z-[110]"
           >
-            <div 
-              onClick={(e) => e.stopPropagation()} 
+            <div
+              onClick={(e) => e.stopPropagation()}
               className="bg-white p-4 rounded shadow-md"
             >
               <p>Are you sure you want to restore this payment?</p>
@@ -596,7 +591,8 @@ useEffect(() => {
                 </button>
                 <button
                   onClick={confirmRestore}
-                  className="px-4 py-2 bg-green-500 text-white rounded"
+                  className="px-4 py-2 text-white rounded"
+                  style={{ backgroundColor: "#00c951" }}
                 >
                   Restore
                 </button>
@@ -607,11 +603,11 @@ useEffect(() => {
 
         {/* Screenshot Modal */}
         {showScreenshot && (
-          <div 
+          <div
             onClick={() => {
               setShowScreenshot(false);
               setCurrentScreenshot(null);
-            }} 
+            }}
             className="fixed inset-0 bg-black/80 flex items-center justify-center z-[110]"
           >
             <button
@@ -669,7 +665,7 @@ useEffect(() => {
         )}
         <img
           src={userData.QrImage}
-           onClick={() => setQrOpen(true)}
+          onClick={() => setQrOpen(true)}
           alt="User Photo"
           className="w-full md:min-w-[20em] max-h-[20em] xl:w-1/2 h-full xl:min-w-[17em] object-cover rounded-xl"
         />
@@ -695,6 +691,7 @@ useEffect(() => {
             />
           </div>
         )}
+
       </div>
 
       <div className="bg-gray-100 p-4 rounded-xl text-lg md:text-2xl flex flex-col justify-between">
@@ -720,10 +717,28 @@ useEffect(() => {
           <span>
             <strong>Joining date:</strong>
           </span>
-          <span>{contact.joining_date.split(" ")[0]}</span>
+          <span>{contact.joining_date.slice(0, 10)}</span>
         </div>
       </div>
 
+      {/* <div className="bg-gray-100 p-4 rounded-xl text-lg md:text-2xl"> */}
+      {/*   <h2 className="font-bold mb-2">Most Sold Clothes</h2> */}
+      {/*   {clothesData.map((item, index, comp) => ( */}
+      {/*     <div */}
+      {/*       key={index} */}
+      {/*       onClick={() => { */}
+      {/*         setShowModal2(true); */}
+      {/*         setIndexing(index); */}
+      {/*       }} */}
+      {/*       className="flex justify-between mb-2 cursor-pointer" */}
+      {/*     > */}
+      {/*       <div className="flex items-center"> */}
+      {/*         <span>{item.name}</span> */}
+      {/*       </div> */}
+      {/*       <span>{item.sold}</span> */}
+      {/*     </div> */}
+      {/*   ))} */}
+      {/* </div> */}
 
       <div className="bg-gray-100 p-4 rounded-xl text-lg md:text-2xl flex flex-col justify-between">
         <div className="flex justify-between">
@@ -746,7 +761,7 @@ useEffect(() => {
         </div>
       </div>
       <div className="overflow-x-auto md:col-span-2 xl:p-4">
- <h2 className="text-xl font-bold mb-4">Payment Summary</h2>
+        <h2 className="text-xl font-bold mb-4">Payment Summary</h2>
         <table className="min-w-full rounded-2xl border-2 border-gray-300">
           <thead>
             <tr className="bg-gray-100">
@@ -760,7 +775,7 @@ useEffect(() => {
               currentItems.map((item, index) => (
                 <tr key={index} className="border">
                   <td className="px-4 py-2 border">
-                    {item.date?.split(" ")[0]}
+                    {item.date?.slice(0, 10)}
                   </td>
                   <td className="px-4 py-2 border">{item.amount}</td>
                   <td className="px-4 py-2 border">
@@ -800,7 +815,7 @@ useEffect(() => {
             setShowDelete1(false);
             setDeleteIndex1(null);
           }} className="fixed inset-0 flex items-center justify-center bg-black/50">
-            <div onClick={(e) => {e.stopPropagation()}} className="bg-white p-4 rounded shadow-md">
+            <div onClick={(e) => { e.stopPropagation() }} className="bg-white p-4 rounded shadow-md">
               <p>Are you sure you want to delete this item?</p>
               <div className="flex justify-end gap-2 mt-4">
                 <button
@@ -814,10 +829,11 @@ useEffect(() => {
                 </button>
                 <button
                   onClick={confirmDelete1}
-                  
+
                   className="px-4 py-2 bg-red-500 text-white rounded"
                 >
-    <ToastContainer />
+                  <ToastContainer />
+
                   Confirm
                 </button>
               </div>
@@ -846,6 +862,7 @@ useEffect(() => {
           </div>
         )}
 
+        {/* Pagination Controls */}
         <div className="grid grid-cols-3 gap-3 md:grid-cols-4 w-full mx-auto justify-center p-4">
           <button
             onClick={() => handlePageChange("prev")}
@@ -853,11 +870,14 @@ useEffect(() => {
             className="px-4 py-2 bg-gray-200 w-full md:w-fit rounded-md disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
           >
             <span className="w-full lg:text-xl">Previous</span>
+
           </button>
           <span className="px-4 lg:text-xl py-2 justify-self-center">
             Page {currentPage}
           </span>
           <div className="justify-self-end md:col-span-2 flex flex-col md:flex-row gap-2">
+
+
             <button
               onClick={() => handlePageChange("next")}
               disabled={startIndex + itemsPerPage >= Olddata?.length}
@@ -868,6 +888,7 @@ useEffect(() => {
             </button>
 
             <button
+              // onClick={() => setShowModal(true)}
               onClick={() => setShowDeletedPayments(true)}
               className="px-4 py-2 hidden md:block bg-gray-200 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
             >
@@ -879,24 +900,24 @@ useEffect(() => {
               onClick={() => setShowModal(true)}
               className="px-4 py-2 hidden md:block bg-gray-200 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
             >
-              <span className="hidden md:inline">Add To Table</span>
+              <span className="hidden md:inline lg:text-xl">Add To Table</span>
               <span className="md:hidden">+ Add</span>
             </button>
           </div>
           <button
-              onClick={() => setShowDeletedPayments(true)}
-              className="px-4 py-2 bg-gray-200 md:hidden col-span-1 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
-            >
-              
-              <span className="md:hidden">Deleted</span>
-            </button>
+            onClick={() => setShowDeletedPayments(true)}
+            className="px-4 py-2 bg-gray-200 md:hidden col-span-1 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
+          >
+
+            <span className="md:hidden">Deleted</span>
+          </button>
           <button
-              onClick={() => setShowModal(true)}
-              className="px-4 py-2 bg-gray-200 md:hidden col-span-2 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
-            >
-              <span className="hidden md:inline">Add To Table</span>
-              <span className="md:hidden">+ Add</span>
-            </button>
+            onClick={() => setShowModal(true)}
+            className="px-4 py-2 bg-gray-200 md:hidden col-span-2 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
+          >
+            <span className="hidden md:inline">Add To Table</span>
+            <span className="md:hidden">+ Add</span>
+          </button>
         </div>
       </div>
 
@@ -1025,8 +1046,7 @@ useEffect(() => {
                 <button
                   type="button"
                   className="px-4 py-2 rounded-md"
-                  style={{backgroundColor:"#e5e7eb", border:"none",color:"black"}}                  
-
+                  style={{ backgroundColor: "#e5e7eb", border: "none", color: "black" }}
                   onClick={() => {
                     setShowModal(false);
                     reset();
@@ -1037,8 +1057,7 @@ useEffect(() => {
                 <button
                   type="submit"
                   className="px-4 py-2 rounded-md"
-                  style={{backgroundColor:"#2b7fff", border:"none",color:"white"}}
-                  
+                  style={{ backgroundColor: "#2b7fff", border: "none", color: "white" }}
 
                 >
                   Submit
@@ -1084,14 +1103,13 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
 
   const [deleteIndex, setDeleteIndex] = useState(null);
 
-  const deleterow2 =(index)=>{
-   setShowDelete2(!showDelete2)
-   setDeleteIndex(index)
-   setDeleteId(data.id)
+  const deleterow2 = (index) => {
+    setShowDelete2(!showDelete2)
+    setDeleteIndex(index)
+    setDeleteId(data.id)
   }
 
-  const confirmDelete2 =(id) =>{
-
+  const confirmDelete2 = (id) => {
     setShowDelete2(!showDelete2)
 
     const data = new FormData();
@@ -1112,24 +1130,20 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
     } catch (error) {
       console.log("error response", error);
     }
-  
-  window.location.reload();
+
   }
 
-  
 
 
 
   return (
     <>
       <tr
-        className={`cursor-pointer border-b hover:bg-gray-100 ${
-          isExpanded ? "bg-gray-200" : "bg-white"
-        }`}
+        className={`cursor-pointer border-b hover:bg-gray-100 ${isExpanded ? "bg-gray-200" : "bg-white"
+          }`}
         onClick={() => onExpand(index)}
       >
-              <td className="py-2 px-4">{data.date?.split(" ")[0]}</td>
-
+        <td className="py-2 px-4">{data.date?.slice(0, 10)}</td>
         <td className="py-2 px-4">
           {data.status === 1 ? "Paid" : "Not Paid"}
         </td>
@@ -1139,11 +1153,10 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
         <td className="py-2 px-4 flex w-full items-center justify-between">
           {data.amount}
           <button
-            onClick={(e , index) => {
-            
+            onClick={(e, index) => {
+
               deleterow2(index, data.id);
               e.stopPropagation();
-              
 
             }}
             className="cursor-pointer hidden md:block  rounded-sm p-2"
@@ -1153,36 +1166,36 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
           </button>
         </td>
 
-       
+
 
         {showDelete2 && (
-  <div  o onClick={() => {
-    setShowDelete2(false);
-    setDeleteIndex(null);
-  }} className="fixed inset-0 flex items-center justify-center bg-black/50">
-    <div onClick={(e)=>{e.stopPropagation()}} className="bg-white p-4 rounded shadow-md">
-      <p>Are you sure you want to delete this item?</p>
-      <div className="flex justify-end gap-2 mt-4">
-        <button
-          onClick={() => {
+          <div o onClick={() => {
             setShowDelete2(false);
             setDeleteIndex(null);
-          }}
-          className="px-4 py-2 bg-gray-300 rounded"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={confirmDelete2}
-          className="px-4 py-2 bg-red-500 text-white rounded"
-        >
-          Confirm
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-        
+          }} className="fixed inset-0 flex items-center justify-center bg-black/50">
+            <div onClick={(e) => { e.stopPropagation() }} className="bg-white p-4 rounded shadow-md">
+              <p>Are you sure you want to delete this item?</p>
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  onClick={() => {
+                    setShowDelete2(false);
+                    setDeleteIndex(null);
+                  }}
+                  className="px-4 py-2 bg-gray-300 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete2}
+                  className="px-4 py-2 bg-red-500 text-white rounded"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </tr>
       {isExpanded && (
         <tr className="bg-gray-50">
@@ -1200,8 +1213,7 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
                 </thead>
                 <tbody>
                   {Array.isArray(data.user_purchase_details) &&
-                  data.user_purchase_details.length > 0 ? (
-
+                    data.user_purchase_details.length > 0 ? (
                     data.user_purchase_details.map((item, i) => (
                       <tr key={i} className="border-b">
                         <td className="py-1 px-2">{item.item_name}</td>
@@ -1225,6 +1237,7 @@ const CollapsibleTableRow = ({ data, index, expandedIndex, onExpand }) => {
             </div>
           </td>
         </tr>
+
       )}
 
     </>
@@ -1322,8 +1335,7 @@ const SalesTable = ({ items }) => {
     reset(); // Reset form fields
   };
 
-const DeletedSales = () => {
-
+  const DeletedSales = () => {
     console.log("hell is waiting")
     setShowDeleted2(!showDeleted2);
   }
@@ -1368,9 +1380,9 @@ const DeletedSales = () => {
             disabled={salesCurrentPage === 1}
             className="px-4 py-2 bg-gray-200 w-full md:w-fit rounded-md disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
           >
-            <span className="w-full">Previous</span>
+            <span className="w-full lg:text-xl">Previous</span>
           </button>
-          <span className="px-4 py-2 justify-self-center">
+          <span className="px-4 py-2 lg:text-xl justify-self-center">
             Page {salesCurrentPage}
           </span>
           <div className="justify-self-end md:col-span-2 flex flex-col md:flex-row gap-2">
@@ -1379,42 +1391,40 @@ const DeletedSales = () => {
               disabled={salesStartIndex + salesItemsPerPage >= items.length}
               className="px-4 py-2 bg-gray-200 rounded-md w-full md:w-fit disabled:bg-gray-100 hover:bg-gray-300 transition-colors"
             >
-              <span className="w-full">Next</span>
+              <span className="w-full lg:text-xl">Next</span>
             </button>
-            
-             <button
-                // onClick={() => setShowModal(true)}
-                onClick={DeletedSales}
-                className="px-4 py-2 hidden md:block bg-gray-200 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
-              >
-                <span className="hidden md:inline lg:text-xl">Deleted Table</span>
-                
-              </button>
 
+            <button
+              // onClick={() => setShowModal(true)}
+              onClick={DeletedSales}
+              className="px-4 py-2 hidden md:block bg-gray-200 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
+            >
+              <span className="hidden md:inline lg:text-xl">Deleted Summary</span>
+
+            </button>
             <button
               onClick={() => setShowModal3(true)}
               className="px-4 py-2 hidden md:block bg-gray-200 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
             >
-              <span className="hidden md:inline">Add to table</span>
-              <span className="md:hidden">+ Add</span>
-            </button>
-             
-          </div>
-           <button
-                onClick={() => setShowModal(true)}
-                className="px-4 py-2 bg-gray-200 md:hidden col-span-1 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
-              >
-                
-                <span className="md:hidden">Deleted</span>
-              </button>
-          <button
-              onClick={() => setShowModal3(true)}
-              className="px-4 py-2 bg-gray-200 md:hidden col-span-2 md:col-span-3 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
-            >
-              <span className="hidden md:inline">Add to table</span>
+              <span className="hidden md:inline lg:text-xl">Add to table</span>
               <span className="md:hidden">+ Add</span>
             </button>
 
+          </div>
+          <button
+            onClick={() => setShowModal(true)}
+            className="px-4 py-2 bg-gray-200 md:hidden col-span-1 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
+          >
+
+            <span className="md:hidden">Deleted</span>
+          </button>
+          <button
+            onClick={() => setShowModal3(true)}
+            className="px-4 py-2 bg-gray-200 md:hidden col-span-2 md:col-span-3 rounded-md w-full md:w-fit hover:bg-gray-300 transition-colors"
+          >
+            <span className="hidden md:inline">Add to table</span>
+            <span className="md:hidden">+ Add</span>
+          </button>
         </div>
       </div>
 
@@ -1560,43 +1570,30 @@ const DeletedSales = () => {
                     </div>
 
                     <label className="block text-sm font-medium mb-1">
-</label>
-<select
-  required
-  value={item.name}
-  onChange={(e) =>
-    handleSubItemChange(index, "name", e.target.value)
-  }
+                      Item Name
+                    </label>
+                    <select
+                      required
+                      value={item.name}
+                      onChange={(e) =>
+                        handleSubItemChange(index, "name", e.target.value)
+                      }
                       className="w-full p-2 border rounded mb-2"
                     >
                       <option value="">Select Item</option>
-                      {[
-                        "Kurta Pajama",
-                        "Silk Saree",
-                        "Nehru Jacket",
-                        "Lehenga Choli",
-                        "Sherwani Set",
-                        "Salwar Suit",
-                        "Dhoti Kurta",
-                        "Cotton Kurti",
-                        "Ethnic Wear",
-                        "Pathani Suit",
-                        "Anarkali Dress",
-                        "Kurta Set",
-                        "Gown Dress",
-                        "Banarasi Saree",
-                        "Chanderi Suit",
-                        "Linen Kurta",
-                        "Denim Kurti",
-                        "Zari Saree",
-                        "Pattu Pavadai",
-                        "Angrakha Kurta",
-                      ].map((name, i) => (
-                          <option key={i} value={name}>
-                            {name}
-                          </option>
-                        ))}
+                      {Object.entries(clothingItems).map(
+                        ([category, items]) => (
+                          <optgroup label={category} key={category}>
+                            {items.map((name, i) => (
+                              <option key={`${category}-${i}`} value={name}>
+                                {name}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ),
+                      )}
                     </select>
+
 
                     <label className="block text-sm font-medium mb-1">
                       Quantity
@@ -1741,7 +1738,7 @@ const DeletedSalesTable = ({ contact }) => {
   };
 
   return (
-    <div className="overflow-y-auto min-h-[25em] mt-8 min-w-full flex flex-col w-[100%] md:col-span-2">
+    <div className="overflow-y-auto px-2 min-h-[25em] mt-8 min-w-full flex flex-col w-[100%] md:col-span-2">
       <h2 className="text-xl font-bold mb-4">Deleted Sales History</h2>
       <table className="min-w-full bg-white shadow rounded">
         <thead>
@@ -1816,7 +1813,7 @@ const DeletedSalesRow = ({ data, index, expandedIndex, onExpand }) => {
     } catch (error) {
       console.log("error response", error);
     }
-    window.location.reload();
+    // window.location.reload();
   };
 
   return (
@@ -1826,7 +1823,7 @@ const DeletedSalesRow = ({ data, index, expandedIndex, onExpand }) => {
           }`}
         onClick={() => onExpand(index)}
       >
-        <td className="py-2 px-4">{data.date}</td>
+        <td className="py-2 px-4">{data.date.slice(0, 10)}</td>
         <td className="py-2 px-4">
           {data.status === 1 ? "Paid" : "Not Paid"}
         </td>
@@ -1839,7 +1836,7 @@ const DeletedSalesRow = ({ data, index, expandedIndex, onExpand }) => {
               setShowRestoreDialog(true);
             }}
             className="cursor-pointer hidden md:block rounded-sm p-2"
-            style={{ backgroundColor: "#4CAF50", color: "white" }}
+            style={{ backgroundColor: "#00c951", color: "white" }}
           >
             Restore
           </button>
@@ -1865,7 +1862,8 @@ const DeletedSalesRow = ({ data, index, expandedIndex, onExpand }) => {
               </button>
               <button
                 onClick={handleRestore}
-                className="px-4 py-2 bg-green-500 text-white rounded"
+                className="px-4 py-2 text-white rounded"
+                style={{ backgroundColor: "#00c951" }}
               >
                 Restore
               </button>
@@ -1905,5 +1903,4 @@ const DeletedSalesRow = ({ data, index, expandedIndex, onExpand }) => {
       )}
     </>
   );
-
 };
